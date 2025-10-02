@@ -31,19 +31,27 @@ enum Role: ADMIN, USER
 -longitude
 
 
-Для хранения данных о погоде используем класс Forecast
+Для хранения данных о прогнозе погоды в городе используем класс Forecast
 -id
 -City
--forecastDate
+-forecastDate       // нужно ли ?????
 -tempMax
 -tempMin
+-precipitation
+-updateDate         если погода обновлялась, например, не сегодня, то запрашиваем из внешнего API. 
+                    Иначе берем из БД
+
+Для хранения данных о текущей погоде используем класс WeatherNow
+-id
+-City
 -tempCurrent
--rainSum
--updateDate
+-precipitation
+-updateDateTime     // если погода обновлялась, например, ранее, чем 1 час назад, то запрашиваем из внешнего API
+Иначе берем из БД
 
 
 Новый пользователь проходит процедуру регистрации, вводит все свои данные.
-Если данные кооректны, то мы:
+Если данные корректны, то мы:
 - регистрируем пользователя (то есть заносим его данные в БД)
 
 
@@ -55,7 +63,7 @@ UserController
 public UserResponseDto addNewUser(UserRequestDto request);
 
 // найти всех пользователей (для ADMIN)
-public List<User> findAllFullDetails();
+public List<UserResponseDto> findAllFullDetails();
 
 // найти пользователя по ID
 public UserResponseDto findUserById(Integer id);
@@ -65,48 +73,70 @@ public UserResponseDto findUserByEmail(String email);
 
 // обновить данные от имени пользователя (пользователь хочет
 // поменять какие-то данные в своем профиле)
-
-метод put/post с использованием dto
-когда мы получаем такой запрос то из тела запроса данные попадают в
-UserUpdateRequestDto и ЕСЛИ в этом объекте КАКОЕ-ТО поле присутствует
-и его значение удовлетворяет требованиям валидации, то мы должны
-заменить в нашем пользователе значение этого поля на новое
-
 public UserResponseDto updateUser(UserUpdateRequestDto request);
 
-// удаление записи
-public boolean deleteUser(Integer id);
+// удаление User
+public UserResponseDto deleteUser(Long id);
 
-
+-------------------------------------------------------------
 
 CityController
 // добавить новый город - (для ADMIN) 
-public UserResponseDto addNewUser(UserRequestDto request);
+public CytyResponseDto addNewCity(CityRequestDto request);
 
-// получить прогноз по городу на 7 дней
+//Обновить город ( для ADMIN)
+public CityResponseDto updateCity(CityRequestDto request);
 
-// получить прогноз по городу на 1 день из диапазона ближайших 7 дней
+// найти все города
+public List<CityResponseDto> findAllCities();
 
-// получить текущую погоду по городу на сейчас
+// найти города по части имени
+public List<CityResponseDto> findCityByName(String cityName);
+
+// найти город по ID
+public CityResponseDto findCityById(Long cityId);
 
 // добавить город в избранные (мах - 10)
+public List<CityResponseDto> addFavoriteCity(Long cityId);
 
 // удалить город из избранных по ID
+public List<CityResponseDto> deleteFavoriteCity(Long cityId);
 
-// найти город по имени
-
-// список городов по стране
+-----------------------------------------------------------
 
 CountryController
 // добавить новую страну - (для ADMIN)
 public CountryResponseDto addNewCountry(CountryRequestDto request);
 
-// удалить Country
+// удалить Country by ID
+public CountryResponseDto deleteCountry(Long countryId);
 
 // найти Country по имени
+public CountryResponseDto findCountryByName(String countryName);
 
 // получить список Countries
+public List<CountryResponseDto> findAllCountries();
 
+// обновить Country by ID
+public CountryResponseDto updateCountry(CountryRequestDto request);
+
+// список городов по стране
+public List<CityResponseDto> findCityByCountry(Long countryId);
+
+-------------------------------------------------------------------------
+
+WeatherForecastController
+// получить прогноз по городу на 7 дней
+public List<ForecastResponseDto> getForecastByCity(Long cityId);
+
+// получить прогноз по городу на 1 день из диапазона ближайших 7 дней
+public ForecastResponseDto getForecastByCity(Long cityId, Date date); //проверка, что дата в допустимом диапазоне
+
+// получить текущую погоду по городу на сейчас
+public WeatherNowResponseDto getWeatherNowByCity(Long cityId);
+
+// получить теущую погоду по текущему местоположению пользователя  ---  реализовать получение примерного расположения пользователя
+public WeatherNowResponseDto getWeatherNowByThisLocation();
 
 
 

@@ -99,7 +99,8 @@ public List<ForecastResponseDto> getForecastByCityName(String cityName);
 --- not now ---------public WeatherNowResponseDto getWeatherNowByThisLocation();
 
 ------------------------------------------------------------------------
-statisticController
+
+statisticController -- for ADMIN only
 
 //получить список пользователей
 public List<UserResponseDto> getAllUsers();
@@ -116,5 +117,5 @@ public CityResponseDto getColdestCity();
 //самый теплый город на сегодня
 public CityResponseDto getWarmestCity();
 
-// город с максимумом осадков нам сегодня
+// город с максимумом осадков на сегодня
 public CityResponseDto getCityWithMaxPrecipitation();

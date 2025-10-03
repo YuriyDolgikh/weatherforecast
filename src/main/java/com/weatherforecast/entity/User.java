@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
+@Table(name = "account")
 public class User {
 
     @Id
@@ -27,7 +27,6 @@ public class User {
 
     @NotBlank
     @Size(min = 3, max = 15)
-
     private String name;
 
     @Email(regexp = "^[A-Za-z0-9]+@[A-Za-z0-9]+\\.[A-Za-z]{2,}$", message = "Invalid email")

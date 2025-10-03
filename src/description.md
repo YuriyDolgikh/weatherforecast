@@ -4,7 +4,7 @@
 * Сохранение «избранных городов» пользователя.
 * Автоматическое обновление прогноза (scheduler).
 * JWT-аутентификация, роли: `USER` (свои города), `ADMIN` (статистика).
-* API: [Open-Meteo](https://open-meteo.com/).
+* API: (https://www.weatherbit.io/).
 
 Для хранения данных о пользователе используем класс User
 -id
@@ -19,14 +19,9 @@
 enum Role: ADMIN, USER
 
 
-Для хранения данных о стране используем класс Country - (only for ADMIN)
+Для хранения данных о городе используем класс City
 -id
 -name - уникальный
-
-Для хранения данных о городе используем класс Location
--id
--name - уникальный
--Сountry
 -latitude
 -longitude
 
@@ -34,14 +29,14 @@ enum Role: ADMIN, USER
 Для хранения данных о прогнозе погоды в городе используем класс Forecast
 -id
 -City
--forecastDate       // нужно ли ?????
+-forecastDate  
 -tempMax
 -tempMin
--precipitation
+-precipitation -- осадки суммарно
 -updateDate         если погода обновлялась, например, не сегодня, то запрашиваем из внешнего API. 
                     Иначе берем из БД
 
-Для хранения данных о текущей погоде используем класс WeatherNow
+Для хранения данных о текущей погоде используем класс WeatherNow --- by the our request
 -id
 -City
 -tempCurrent
@@ -81,62 +76,45 @@ public UserResponseDto deleteUser(Long id);
 -------------------------------------------------------------
 
 CityController
-// добавить новый город - (для ADMIN) 
-public CytyResponseDto addNewCity(CityRequestDto request);
-
-//Обновить город ( для ADMIN)
-public CityResponseDto updateCity(CityRequestDto request);
-
-// найти все города
-public List<CityResponseDto> findAllCities();
 
 // найти города по части имени
-public List<CityResponseDto> findCityByName(String cityName);
-
-// найти город по ID
-public CityResponseDto findCityById(Long cityId);
+public List<CityResponseDto> findCityByNameContains(String cityName);
 
 // добавить город в избранные (мах - 10)
-public List<CityResponseDto> addFavoriteCity(Long cityId);
+public List<CityResponseDto> addCityToFavorite(String cityName);
 
-// удалить город из избранных по ID
-public List<CityResponseDto> deleteFavoriteCity(Long cityId);
+// удалить город из избранных 
+public List<CityResponseDto> deleteCityFromFavorite(String cityName);
 
------------------------------------------------------------
+------------------------------------------------------------------------
 
-CountryController
-// добавить новую страну - (для ADMIN)
-public CountryResponseDto addNewCountry(CountryRequestDto request);
-
-// удалить Country by ID
-public CountryResponseDto deleteCountry(Long countryId);
-
-// найти Country по имени
-public CountryResponseDto findCountryByName(String countryName);
-
-// получить список Countries
-public List<CountryResponseDto> findAllCountries();
-
-// обновить Country by ID
-public CountryResponseDto updateCountry(CountryRequestDto request);
-
-// список городов по стране
-public List<CityResponseDto> findCityByCountry(Long countryId);
-
--------------------------------------------------------------------------
-
-WeatherForecastController
+ForecastController
 // получить прогноз по городу на 7 дней
-public List<ForecastResponseDto> getForecastByCity(Long cityId);
+public List<ForecastResponseDto> getForecastByCityName(String cityName);
 
-// получить прогноз по городу на 1 день из диапазона ближайших 7 дней
-public ForecastResponseDto getForecastByCity(Long cityId, Date date); //проверка, что дата в допустимом диапазоне
+--- not now ---------// получить текущую погоду по городу на сейчас
+--- not now ---------public WeatherNowResponseDto getWeatherNowByCity(Long cityId);
 
-// получить текущую погоду по городу на сейчас
-public WeatherNowResponseDto getWeatherNowByCity(Long cityId);
+--- not now ---------// получить теущую погоду по текущему местоположению пользователя  ---  реализовать получение примерного расположения пользователя
+--- not now ---------public WeatherNowResponseDto getWeatherNowByThisLocation();
 
-// получить теущую погоду по текущему местоположению пользователя  ---  реализовать получение примерного расположения пользователя
-public WeatherNowResponseDto getWeatherNowByThisLocation();
+------------------------------------------------------------------------
+statisticController
 
+//получить список пользователей
+public List<UserResponseDto> getAllUsers();
 
+//получить список городов, добавленных и избранное всеми пользователями
+public List<CityResponseDto> getAllCitiesInFavorites();
 
+//получить список городов, добавленных и избранное конкретным пользователем
+public List<CityResponseDto> getAllCitiesInFavoriteByUserId(Long userId);
+
+//самый холодный город на сегодня
+public CityResponseDto getColdestCity();
+
+//самый теплый город на сегодня
+public CityResponseDto getWarmestCity();
+
+// город с максимумом осадков нам сегодня
+public CityResponseDto getCityWithMaxPrecipitation();

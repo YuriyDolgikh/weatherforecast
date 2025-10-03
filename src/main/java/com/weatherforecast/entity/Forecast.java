@@ -5,11 +5,11 @@ import java.time.LocalDateTime;
 
 public class Forecast {
 
-    Long id;
-    City city;
-    LocalDate forecastDate;
-    String tempMax;
-    String tempMin;
-    String precipitation;
-    LocalDateTime updateDateTime;
+    private Long id;
+    private City city;
+    private LocalDate forecastDate;
+    private String tempMax;
+    private String tempMin;
+    private String precipitation;
+    private LocalDateTime updateDateTime;
 }

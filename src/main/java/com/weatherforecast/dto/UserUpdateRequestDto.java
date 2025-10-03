@@ -17,7 +17,7 @@ public class UserUpdateRequestDto {
 
     @NotBlank(message = "Name is required and must be not blank)")
     @Size(min = 3, max = 25)
-    private String lastName;
+    private String name;
 
     private String hashPassword;
 

@@ -29,6 +29,4 @@ public class City {
     @NotBlank
     private String latitude;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
 }

@@ -1,7 +1,7 @@
-package com.weatherforecast.sequrity.service;
+package com.weatherforecast.security.service;
 
 import com.weatherforecast.repository.UserRepository;
-import com.weatherforecast.sequrity.entity.MyUserToUserDetails;
+import com.weatherforecast.security.entity.MyUserToUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

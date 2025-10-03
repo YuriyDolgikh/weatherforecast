@@ -1,6 +1,6 @@
-package com.weatherforecast.sequrity.service;
+package com.weatherforecast.security.service;
 
-import com.weatherforecast.sequrity.dto.AuthRequest;
+import com.weatherforecast.security.dto.AuthRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +17,11 @@ public class AuthService {
     private final CustomUserDetailService customUserDetailService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * Generate JWT token for a user with username
+     * @param request
+     * @return String variable with JWT token
+     */
     public String generateJwt(AuthRequest request) {
 
         UserDetails authUser = customUserDetailService.loadUserByUsername(request.getUsername());

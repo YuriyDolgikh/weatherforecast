@@ -1,4 +1,4 @@
-package com.weatherforecast.sequrity.dto;
+package com.weatherforecast.security.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

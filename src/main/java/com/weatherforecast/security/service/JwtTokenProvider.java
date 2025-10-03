@@ -1,4 +1,4 @@
-package com.weatherforecast.sequrity.service;
+package com.weatherforecast.security.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;

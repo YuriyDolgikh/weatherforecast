@@ -1,8 +1,8 @@
-package com.weatherforecast.sequrity.config;
+package com.weatherforecast.security.config;
 
-import com.weatherforecast.sequrity.service.CustomUserDetailService;
-import com.weatherforecast.sequrity.service.InvalidJwtException;
-import com.weatherforecast.sequrity.service.JwtTokenProvider;
+import com.weatherforecast.security.service.CustomUserDetailService;
+import com.weatherforecast.security.service.InvalidJwtException;
+import com.weatherforecast.security.service.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

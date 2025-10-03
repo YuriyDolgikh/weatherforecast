@@ -1,4 +1,4 @@
-package com.weatherforecast.sequrity.service;
+package com.weatherforecast.security.service;
 
 public class InvalidJwtException extends RuntimeException {
     public InvalidJwtException(String message) {

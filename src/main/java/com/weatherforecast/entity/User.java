@@ -40,15 +40,30 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
     private LocalDate createDate;
 
     private LocalDate updateDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(
+            name = "user_cities",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "city_id")
+    )
     private Set<City> cities = new HashSet<>();
 
     public enum Role {
         ADMIN,
         USER,
+    }
+
+    public enum Status {
+        NOT_CONFIRMED,
+        CONFIRMED,
+        DELETE
     }
 }

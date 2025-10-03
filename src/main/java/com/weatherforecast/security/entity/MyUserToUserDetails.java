@@ -1,4 +1,4 @@
-package com.weatherforecast.sequrity.entity;
+package com.weatherforecast.security.entity;
 
 import com.weatherforecast.entity.User;
 import lombok.RequiredArgsConstructor;

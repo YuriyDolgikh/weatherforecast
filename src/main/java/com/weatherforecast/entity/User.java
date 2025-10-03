@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,9 +44,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
-    private LocalDate updateDate;
+    private LocalDateTime updateDate;
 
     @ManyToMany
     @JoinTable(

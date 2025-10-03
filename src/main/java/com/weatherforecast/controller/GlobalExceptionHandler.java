@@ -59,13 +59,22 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    /**
+     * Handles  thrown when the request body
+     * cannot be parsed or converted to the target Java type (invalid JSON,
+     * wrong enum constant, or incorrect date format).
+     *
+     * @param ex the thrown  HttpMessageNotReadableException
+     * @return a  ResponseEntity containing a descriptive error message
+     * and HTTP 400 (Bad Request) status
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleNotReadable(HttpMessageNotReadableException ex) {
         Throwable cause = ex.getRootCause() != null ? ex.getRootCause() : ex.getMostSpecificCause();
-        // fallback
+
         String msg = "Invalid request body";
 
-        // 1) Json: неверный тип/формат поля (enum и LocalDate)
+        //Json: invalid field format (enum and LocalDate)
         if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException) {
             com.fasterxml.jackson.databind.exc.InvalidFormatException ife =
                     (com.fasterxml.jackson.databind.exc.InvalidFormatException) cause;
@@ -73,7 +82,7 @@ public class GlobalExceptionHandler {
             Class<?> target = ife.getTargetType();
             String field = ife.getPath().isEmpty() ? "value" : ife.getPath().get(0).getFieldName();
 
-            // LocalDate
+            //LocalDate
             if (java.time.LocalDate.class.equals(target)) {
                 msg = "Invalid value for '" + field + "'. Use date format yyyy-MM-dd (e.g. 2025-10-08)";
                 return bad(msg);
@@ -89,22 +98,29 @@ public class GlobalExceptionHandler {
             }
         }
 
-        // 2) Когда первопричина — DateTimeParseException
+        //DateTimeParseException
         if (cause instanceof java.time.format.DateTimeParseException) {
             msg = "Invalid date format. Use yyyy-MM-dd (e.g. 2025-10-08)";
             return bad(msg);
         }
 
-        // дефолт
         return bad(msg);
     }
 
+    /**
+     * Builds a standardized ResponseEntity for bad request responses (HTTP 400).
+     * Used internally by exception handlers to return error messages in JSON format.
+     *
+     * @param message human-readable error description
+     * @return ResponseEntity containing a map with key {@code "message"}
+     */
     private ResponseEntity<Map<String, Object>> bad(String message) {
         return ResponseEntity.badRequest().body(java.util.Map.of("message", message));
     }
-    //deadline
+
+
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<Map<String,Object>> handleBadRequest(BadRequestException ex) {
+    public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("message", ex.getMessage()));
     }

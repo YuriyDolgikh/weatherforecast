@@ -29,7 +29,7 @@ public class User {
     @Size(min = 3, max = 15)
     private String name;
 
-    @Email(regexp = "^[A-Za-z0-9]+@[A-Za-z0-9]+\\.[A-Za-z]{2,}$", message = "Invalid email")
+    @Email(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", message = "Invalid email")
     @Column(unique = true, nullable = false)
     private String email;
 

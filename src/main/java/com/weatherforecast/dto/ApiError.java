@@ -25,7 +25,7 @@ public class ApiError {
     private Object rejectedValue;
 
     // Validation error list (if exists)
-    private List<Map<String,Object>> errors;
+    private List<Map<String, Object>> errors;
 
     // Date and Time of error occurrence
     private LocalDateTime timestamp;

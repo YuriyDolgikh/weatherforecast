@@ -29,7 +29,7 @@ public class MyUserToUserDetails implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
-    // Methods, written below, are not used in this project
+    // Methods, written below, are not used in this project and made for keep the structure of the project
 
     @Override
     public boolean isAccountNonExpired() {

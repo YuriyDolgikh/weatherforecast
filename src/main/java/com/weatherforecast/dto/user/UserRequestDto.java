@@ -1,4 +1,4 @@
-package com.weatherforecast.dto;
+package com.weatherforecast.dto.user;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;

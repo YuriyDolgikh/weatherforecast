@@ -1,4 +1,4 @@
-package com.weatherforecast.dto;
+package com.weatherforecast.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

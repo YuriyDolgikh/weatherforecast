@@ -15,10 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class ForecastRequestDto {
 
-    @NotNull(message = "City ID is required")
-    private Long cityId;
-
-    // Optional: user may request a forecast for a specific date within the next 7 days
-    private LocalDate forecastDate;
+    @NotNull(message = "City name is required")
+    private String name;
 
 }

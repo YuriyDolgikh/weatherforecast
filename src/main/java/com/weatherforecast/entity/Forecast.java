@@ -60,7 +60,7 @@ public class Forecast {
 
     @NotNull(message = "Forecast date is required")
     @Column(name = "forecast_date", nullable = false)
-    private LocalDate forecastDate;
+    private LocalDateTime forecastDate;
 
     @NotBlank(message = "Maximum temperature is required")
     @Column(name = "temp_max", nullable = false, length = 20)

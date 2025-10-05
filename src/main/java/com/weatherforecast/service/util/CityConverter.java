@@ -13,8 +13,6 @@ public class CityConverter {
     public City fromDto(CityRequestDto request){
         return City.builder()
                 .name(request.getName())
-                .latitude(request.getLatitude())
-                .longitude(request.getLongitude())
                 .build();
     }
 

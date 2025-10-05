@@ -16,9 +16,4 @@ public class CityRequestDto {
     @Size(min = 3, max = 20, message = "City name must be between 3 and 20 characters")
     private String name;
 
-    @NotBlank(message = "Latitude is required")
-    private String latitude;
-
-    @NotBlank(message = "Longitude is required")
-    private String longitude;
 }

@@ -13,14 +13,14 @@ import java.time.LocalDateTime;
 @Builder
 public class ForecastResponseDto {
     private Long id;
-    private Long cityId;
+  //  private Long cityId;
     private String cityName;
     private String latitude;
     private String longitude;
-    private LocalDate forecastDate;
+    private LocalDateTime forecastDate;
     private String tempMax;
     private String tempMin;
     private String precipitation;
-    private LocalDateTime updateDate;
+   // private LocalDateTime updateDate;
 
 }

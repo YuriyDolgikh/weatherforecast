@@ -1,17 +1,16 @@
 package com.weatherforecast.service;
 
-import com.weatherforecast.dto.UserRequestDto;
-import com.weatherforecast.dto.UserResponseDto;
-import com.weatherforecast.dto.UserUpdateRequestDto;
+import com.weatherforecast.dto.user.UserRequestDto;
+import com.weatherforecast.dto.user.UserResponseDto;
+import com.weatherforecast.dto.user.UserUpdateRequestDto;
 import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.AlreadyExistException;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.UserRepository;
-import com.weatherforecast.service.util.Converter;
+import com.weatherforecast.service.util.UserConverter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,91 +20,79 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final UserRepository repository;
-    private final Converter converter;
+    private final UserRepository userRepository;
+    private final UserConverter userConverter;
     private final CodeConfirmationService codeConfirmationService;
 
     @Transactional
-    public UserResponseDto registration(UserRequestDto request){
-
-        if (repository.existsByEmail(request.getEmail())) {
+    public UserResponseDto registration(UserRequestDto request) {
+        // Check duplicate for email
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AlreadyExistException("User with email: " + request.getEmail() + " is already exist");
         }
 
-        // ----- а вот если такого пользователя еще нет ------
+        // When email is unique - create a new user
         LocalDateTime now = LocalDateTime.now();
 
-        User newUser = converter.fromDto(request);
-
-        newUser.setRole(User.Role.USER);// по умолчанию роль USER
-        newUser.setStatus(User.Status.NOT_CONFIRMED);
+        User newUser = userConverter.fromDto(request);
+        newUser.setRole(User.Role.USER); // by default - role is USER
+        newUser.setStatus(User.Status.NOT_CONFIRMED); // by default - status is NOT_CONFIRMED
         newUser.setCreateDate(now);
         newUser.setUpdateDate(now);
 
-        repository.save(newUser);
-        // после создания нового пользователя необходимо создать
-        // неовый код подтверждения для него и отправить ему на почту
-
+        userRepository.save(newUser);
+        // After creating a new user, we need to create a new confirmation code for him and send it to him by email
         codeConfirmationService.confirmationCodeManager(newUser);
-
-        return converter.toDto(newUser);
-
+        return userConverter.toDto(newUser);
     }
 
-    public List<UserResponseDto> getAllUsers(){
-        return converter.fromUsers(repository.findAll());
+    public List<UserResponseDto> getAllUsers() {
+        return userConverter.fromUsers(userRepository.findAll());
     }
 
-    public UserResponseDto getUserById(Long id){
-        User user = repository.findById(id)
+    public UserResponseDto getUserById(Long id) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
 
-        return converter.toDto(user);
+        return userConverter.toDto(user);
     }
 
-
-    public List<User> getAllUsersFullDetails(){
-        return repository.findAll();
+    public List<User> getAllUsersFullDetails() {
+        return userRepository.findAll();
     }
 
-    public UserResponseDto getUserByEmail(String email){
-        User user = repository.findByEmail(email)
+    public UserResponseDto getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
 
-        return converter.toDto(user);
+        return userConverter.toDto(user);
     }
 
-
     @Transactional
-    public String confirmationEmail(String code){
-
+    public String confirmationEmail(String code) {
         User user = codeConfirmationService.changeConfirmationStatusByCode(code);
-
         user.setStatus(User.Status.CONFIRMED);
-
-        repository.save(user);
-
-        return "Email " + user.getEmail() + " успешно подтвержден";
+        userRepository.save(user);
+        return "Email " + user.getEmail() + " successfully confirmed";
     }
 
-
     @Transactional
-    public UserResponseDto updateUser(UserUpdateRequestDto updateRequest){
+    public UserResponseDto updateUser(UserUpdateRequestDto updateRequest) {
 
-        if (updateRequest.getEmail() == null || updateRequest.getEmail().isBlank()){
+        if (updateRequest.getEmail() == null || updateRequest.getEmail().isBlank()) {
             throw new IllegalArgumentException("Email must be provided to update user");
         }
 
         String userEmail = updateRequest.getEmail();
 
-        // найдем пользователя по email
-        User userByEmail = repository.findByEmail(userEmail)
+        // Find the user by email
+        User userByEmail = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User with email: " + userEmail + " not found"));
 
-        // обновляем все доступные поля
-        // мы заранее НЕ ЗНАЕМ, а какие именно поля пользователь захочет поменять
-        // то есть в JSON (в теде запроса) будут находится ТОЛЬКО те поля (со значением)
-        // которые пользователь хочет менять (не обязательно все)
+        // Update all presented fields.
+        // Is not known in advance which fields the user wants to change,
+        // so in the JSON (in the request body) there will be only those fields (that are not empty),
+        // which the user wants to change (not obligatory all)
         if (updateRequest.getName() != null && !updateRequest.getName().isBlank()) {
             userByEmail.setName(updateRequest.getName());
         }
@@ -114,41 +101,27 @@ public class UserService {
             userByEmail.setHashPassword(updateRequest.getHashPassword());
         }
 
-        // сохраняем (обновляем) пользователя
-        repository.save(userByEmail);
-
-        return converter.toDto(userByEmail);
-        // или вручную создать UserResponseDto из данных, которые хранятся в userByEmail
+        // Save the updated user
+        userRepository.save(userByEmail);
+        return userConverter.toDto(userByEmail);
     }
 
     @Transactional
-    public boolean deleteUser(Long id){
+    public boolean deleteUser(Long id) {
 
-        // проверим, что такой id существует
-        // и если нет - то сразу возвращаем false и ничего даже не пытаемся удалить
-
-        if (!repository.existsById(id)){
+        // Check that such id exists
+        // If not - return false and do nothing
+        if (!userRepository.existsById(id)) {
             return false;
         }
 
-        // если существует, то
-        // вариант 1 - удаляем сразу по id
-
-        repository.deleteById(id);
-
-        // вариант 2 - сперва найдем объект по этому номеру id
-
-//        User userForDelete = repository.findById(id).get();
-//
-//        repository.delete(userForDelete);
-
+        // If exists - delete by id
+        userRepository.deleteById(id);
         return true;
-
     }
 
-
     @Transactional
-    public boolean renewCode(String email){
+    public boolean renewCode(String email) {    // TODO - by the what case?
 
         User user = getUserByEmailOrThrow(email);
 
@@ -156,18 +129,13 @@ public class UserService {
         return true;
     }
 
-
-    public List<ConfirmationCode> findCodesByUser(String email){
+    public List<ConfirmationCode> findCodesByUser(String email) {
         User user = getUserByEmailOrThrow(email);
         return codeConfirmationService.findCodesByUser(user);
-
     }
 
-
-    private User getUserByEmailOrThrow(String email){
-        return repository.findByEmail(email)
+    private User getUserByEmailOrThrow(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
     }
-
-
 }

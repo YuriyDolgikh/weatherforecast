@@ -19,11 +19,11 @@ public class CodeConfirmationService {
 
     private final ConfirmationCodeRepository repository;
 
-    private final int EXPIRATION_PERIOD = 1;
+    private final int EXPIRATION_PERIOD = 1; // in days
 
     private final String LINK_PATH = "localhost:8080/api/users/code/confirmation?code=";
 
-    public void confirmationCodeManager(User user){
+    public void confirmationCodeManager(User user) {
         String code = generateCode();
         saveConfirmationCode(code, user);
         sendCodeByEmail(code, user);
@@ -35,9 +35,8 @@ public class CodeConfirmationService {
 
         // TODO тут будет отправка пользователю письма с кодом
 
-        System.out.printf("Код подтверждения: " + linkToSend);
-
-
+        // Modeling type of email message
+        System.out.printf("Confirmation code: " + linkToSend);
     }
 
     private void saveConfirmationCode(String generatedCode, User user) {
@@ -47,23 +46,23 @@ public class CodeConfirmationService {
                 .expireDataTime(LocalDateTime.now().plusDays(EXPIRATION_PERIOD))
                 .isConfirmed(false)
                 .build();
-
         repository.save(newCode);
     }
 
+    /**
+     * Generate a random code for confirmation
+     *
+     * @return String variable with random code
+     * @UUID - universal uniq identifier
+     * @format -  128 bit
+     * @template -  xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx ('x' - is a character or a number)
+     * @example - 3f29c3b2-9fc2-11ed-a8fc-0242ac120002
+     */
     private String generateCode() {
-
-        // universal uniq identifier
-        // формат 128 bit
-        // xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-        // где каждый символ 'x' - это либо цифра либо символ от a-f
-        // 3f29c3b2-9fc2-11ed-a8fc-0242ac120002
-
         return UUID.randomUUID().toString();
-
     }
 
-    public User changeConfirmationStatusByCode(String code){
+    public User changeConfirmationStatusByCode(String code) {
         ConfirmationCode confirmationCode = repository.findByCode(code)
                 .orElseThrow(() -> new NotFoundException("Confirmation code: " + code + " not found"));
 
@@ -76,7 +75,7 @@ public class CodeConfirmationService {
         return user;
     }
 
-    public List<ConfirmationCode> findCodesByUser(User user){
+    public List<ConfirmationCode> findCodesByUser(User user) {
         return repository.findByUser(user);
     }
 

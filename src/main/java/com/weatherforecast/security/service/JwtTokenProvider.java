@@ -18,6 +18,7 @@ public class JwtTokenProvider {
 
     /**
      * Create new JWT token for user with username
+     *
      * @param username
      * @return String variable with a complete JWT token
      */
@@ -35,7 +36,8 @@ public class JwtTokenProvider {
 
     /**
      * Validation of JWT token, received from User
-     * @param token
+     *
+     * @param token JWT token
      * @return boolean variable with a result of validation. True, if the token is valid, otherwise will be thrown an exception:
      * @SignatureException - Invalid JWT Signature
      * @MalformedJwtException - Invalid JWT token
@@ -54,9 +56,10 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Get username from JWT token
+     * Get username from JWT token, received from User
+     *
      * @param token JWT token
-     * @return - String variable with username
+     * @return - String variable with username (email)
      */
     public String getUsernameFromJwt(String token) {
         Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());

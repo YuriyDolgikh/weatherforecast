@@ -9,13 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository <User, Long>{
+public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
+
     Optional<User> findByEmail(String email);
+
     List<User> findByName(String name);
 
     @Modifying
     @Transactional
-    @Query(value = "TRUNCATE TABLE account", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE accounts", nativeQuery = true)
     void truncateAndResetAutoIncrement();
 }

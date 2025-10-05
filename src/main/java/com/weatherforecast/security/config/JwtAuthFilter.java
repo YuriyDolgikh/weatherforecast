@@ -30,12 +30,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             String jwt = getTokenFromRequest(request);
 
-            if (jwt != null && jwtTokenProvider.validateToken(jwt)){
-                // получаем из jwt имя пользователя, который прислал запрос (у нас - email)
+            if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
+                // get the username from JWT from request (this is 'email' in our case)
                 UserDetails userDetails = customUserDetailService.loadUserByUsername(jwt);
-                // создаем объект UserDetail, который понимает Spring Security наполнив его данными нашего пользователя
+
+                // create an object UserDetail, which knows Spring Security to fill it with our user data
                 String userName = jwtTokenProvider.getUsernameFromJwt(jwt);
-                // создаем необходимые объекты из Spring Security, чтобы наполнить SecurityContext
+
+                // create a necessary object from Spring Security to fill SecurityContext
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
@@ -44,26 +46,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             System.out.println("ERROR !!! " + e.getMessage());
         }
 
-        // обязательно надо в объект со спсиком фильтров применить добавленные изменения
-        filterChain.doFilter(request,response);
-
+        // definitely we need to apply changes to the object with the list of filters
+        filterChain.doFilter(request, response);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
         /*
-        если в запросе есть jwt, то тогда в теле запроса будет присутствовать
-        строка, которая выглядит так: "Bearer askjhfgaskjhfgbas.asdfgareghaerhaerhaerh.arehgareharhaerhaerh"
+            If in the request there is a jwt, then in the request body will be a string
+            that looks like: "Bearer askjhfgaskjhfgbas.asdfgareghaerhaerhaerh.arehgareharhaerhaerh"
 
-        То есть нам надо из этой строки взять ВСЕ до конца начиная с первого символа после "Bearer "
-        то есть начинаяч с 7 символа строки и до конца
+            That is, we have to take from this line ALL to the end starting with the first character after "Bearer "
+            begins from 7 characters in the line and to the end
          */
-
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")){
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-
         return null;
     }
 }

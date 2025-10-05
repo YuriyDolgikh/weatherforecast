@@ -13,14 +13,14 @@ import java.util.Optional;
 
 public interface ConfirmationCodeRepository extends JpaRepository<ConfirmationCode, Integer> {
 
-   Optional<ConfirmationCode> findByCode(String code);
+    Optional<ConfirmationCode> findByCode(String code);
 
-   Optional<ConfirmationCode> findByCodeAndExpireDataTimeAfter(String code, LocalDateTime currentDataTime);
+    Optional<ConfirmationCode> findByCodeAndExpireDataTimeAfter(String code, LocalDateTime currentDataTime);
 
-   List<ConfirmationCode> findByUser(User user);
+    List<ConfirmationCode> findByUser(User user);
 
-   @Modifying
-   @Transactional
-   @Query(value = "TRUNCATE TABLE confirmation_code", nativeQuery = true)
-   void truncateAndResetAutoIncrement();
+    @Modifying
+    @Transactional
+    @Query(value = "TRUNCATE TABLE confirmation_codes", nativeQuery = true)
+    void truncateAndResetAutoIncrement();
 }

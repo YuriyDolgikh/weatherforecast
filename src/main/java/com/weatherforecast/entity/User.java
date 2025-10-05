@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "account")
+@Table(name = "accounts")
 public class User {
 
     @Id
@@ -50,7 +50,7 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_cities",
+            name = "users_cities",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "city_id")
     )

@@ -1,7 +1,7 @@
 package com.weatherforecast.service.util;
 
-import com.weatherforecast.dto.UserRequestDto;
-import com.weatherforecast.dto.UserResponseDto;
+import com.weatherforecast.dto.user.UserRequestDto;
+import com.weatherforecast.dto.user.UserResponseDto;
 import com.weatherforecast.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class Converter {
+public class UserConverter {
 
     public User fromDto(UserRequestDto request){
 

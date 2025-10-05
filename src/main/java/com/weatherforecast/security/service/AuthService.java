@@ -18,8 +18,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * Generate JWT token for a user with username
-     * @param request
+     * Generate a JWT token for a user with a username (email)
+     * @param request - object with username and password
      * @return String variable with JWT token
      */
     public String generateJwt(AuthRequest request) {

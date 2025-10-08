@@ -23,7 +23,7 @@ public class ConfirmationCode {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

@@ -32,10 +32,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
                 // get the username from JWT from request (this is 'email' in our case)
-                UserDetails userDetails = customUserDetailService.loadUserByUsername(jwt);
+                String userName = jwtTokenProvider.getUsernameFromJwt(jwt);
 
                 // create an object UserDetail, which knows Spring Security to fill it with our user data
-                String userName = jwtTokenProvider.getUsernameFromJwt(jwt);
+                UserDetails userDetails = customUserDetailService.loadUserByUsername(userName);
 
                 // create a necessary object from Spring Security to fill SecurityContext
                 Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

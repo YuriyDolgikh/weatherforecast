@@ -3,6 +3,7 @@ package com.weatherforecast.controller;
 import com.weatherforecast.exception.AlreadyExistException;
 import com.weatherforecast.exception.BadRequestException;
 import com.weatherforecast.exception.NotFoundException;
+import com.weatherforecast.security.service.InvalidJwtException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -125,5 +126,10 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidJwtException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidJwt(InvalidJwtException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", ex.getMessage()));
+    }
 
 }

@@ -6,11 +6,13 @@ import com.weatherforecast.dto.user.UserUpdateRequestDto;
 import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.AlreadyExistException;
+import com.weatherforecast.exception.BadRequestException;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.UserRepository;
 import com.weatherforecast.service.util.UserConverter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -80,14 +82,18 @@ public class UserService {
     public UserResponseDto updateUser(UserUpdateRequestDto updateRequest) {
 
         if (updateRequest.getEmail() == null || updateRequest.getEmail().isBlank()) {
-            throw new IllegalArgumentException("Email must be provided to update user");
+            throw new BadRequestException("Email must be provided to update user");
         }
 
         String userEmail = updateRequest.getEmail();
-
         // Find the user by email
         User userByEmail = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new NotFoundException("User with email: " + userEmail + " not found"));
+        // Check that the user for update is the same as the current user
+        User currentUser = getCurrentUser();
+        if (!currentUser.getEmail().equals(updateRequest.getEmail())) {
+            throw new BadRequestException("You can't update another user");
+        }
 
         // Update all presented fields.
         // Is not known in advance which fields the user wants to change,
@@ -116,7 +122,8 @@ public class UserService {
         }
 
         // If exists - delete by id
-        userRepository.deleteById(id);
+        userRepository.deleteConfirmationCodesByUserId(id);
+        userRepository.deleteUserById(id);
         return true;
     }
 
@@ -134,8 +141,22 @@ public class UserService {
         return codeConfirmationService.findCodesByUser(user);
     }
 
-    private User getUserByEmailOrThrow(String email) {
+    public User getUserByEmailOrThrow(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
+    }
+
+    public User getCurrentUser() {
+        return getUserByEmailOrThrow(getCurrentUserEmail());
+    }
+
+    public String getCurrentUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public void setConfirmedAdmin(User user) {
+        user.setStatus(User.Status.CONFIRMED);
+        user.setRole(User.Role.ADMIN);
+        userRepository.save(user);
     }
 }

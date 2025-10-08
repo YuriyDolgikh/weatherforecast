@@ -48,7 +48,7 @@ public class User {
 
     private LocalDateTime updateDate;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JoinTable(
             name = "users_cities",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -64,6 +64,6 @@ public class User {
     public enum Status {
         NOT_CONFIRMED,
         CONFIRMED,
-        DELETE
+        DELETED
     }
 }

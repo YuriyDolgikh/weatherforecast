@@ -141,7 +141,7 @@ public class UserService {
         return codeConfirmationService.findCodesByUser(user);
     }
 
-    private User getUserByEmailOrThrow(String email) {
+    public User getUserByEmailOrThrow(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
     }
@@ -154,7 +154,8 @@ public class UserService {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
-    public void setRoleAdminForUser(User user) {
+    public void setConfirmedAdmin(User user) {
+        user.setStatus(User.Status.CONFIRMED);
         user.setRole(User.Role.ADMIN);
         userRepository.save(user);
     }

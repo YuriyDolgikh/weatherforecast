@@ -1,5 +1,6 @@
 package com.weatherforecast.security.service;
 
+import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.security.dto.AuthRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,12 +26,16 @@ public class AuthService {
      */
     public String generateJwt(AuthRequestDto request) {
 
-        UserDetails authUser = customUserDetailService.loadUserByUsername(request.getUsername());
+        try {
+            customUserDetailService.loadUserByUsername(request.getUsername());
+        } catch (UsernameNotFoundException e){
+            throw new NotFoundException("User with email: " + request.getUsername() + " is not registered");
+        }
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authUser.getUsername(),
-                        authUser.getPassword()
+                        request.getUsername(),
+                        request.getPassword()
                 )
         );
 

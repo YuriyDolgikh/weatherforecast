@@ -40,12 +40,6 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserResponseDto> updateUser(@Valid @RequestBody UserUpdateRequestDto requestDto) {
         return ResponseEntity.ok(userService.updateUser(requestDto));
-//        User currentUser = userService.getCurrentUser();
-//        if (currentUser.getEmail().equals(requestDto.getEmail())) {
-//            return ResponseEntity.ok(userService.updateUser(requestDto));
-//        }else {
-//            return ResponseEntity.badRequest().build();
-//        }
     }
 }
 

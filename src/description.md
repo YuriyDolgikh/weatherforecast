@@ -100,7 +100,7 @@ public List<ForecastResponseDto> getForecastByCityName(String cityName);
 
 ------------------------------------------------------------------------
 
-statisticController -- for ADMIN only
+StatisticController -- for ADMIN only
 
 //получить список пользователей
 public List<UserResponseDto> getAllUsers();

@@ -4,6 +4,7 @@ import com.weatherforecast.dto.user.UserRequestDto;
 import com.weatherforecast.dto.user.UserResponseDto;
 import com.weatherforecast.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,13 +13,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserConverter {
 
+    private final PasswordEncoder passwordEncoder;
+
     public User fromDto(UserRequestDto request){
+
+        String encodedPassword = passwordEncoder.encode(request.getHashPassword());
 
         return User.builder()
                 .name(request.getName())
                 .name(request.getName())
                 .email(request.getEmail())
-                .hashPassword(request.getHashPassword())
+                .hashPassword(encodedPassword)
                 .build();
     }
 

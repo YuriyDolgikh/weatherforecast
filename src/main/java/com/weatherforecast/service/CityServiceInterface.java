@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CityServiceInterface {
     // Find cities by part of the name
-    List<CityResponseDto> getCitiesByNameContains(String cityName);
+    List<CityResponseDto> getCitiesByNameContainsIgnoreCase(String cityName);
 
     // Add a city to favorite (мах - 10)
     List<CityResponseDto> addCityToFavorite(String cityName);

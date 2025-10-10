@@ -11,7 +11,4 @@ import lombok.Data;
 public class CityResponseDto {
     private Long id;
     private String name;
-    private String latitude;
-    private String longitude;
-
 }

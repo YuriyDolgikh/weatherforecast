@@ -1,10 +1,18 @@
 package com.weatherforecast.service;
 
 import com.weatherforecast.dto.city.CityResponseDto;
+import com.weatherforecast.entity.City;
 
 import java.util.List;
 
 public interface CityServiceInterface {
+
+    // Get all cities from DB
+    List<City> getAllCities();
+
+    // Find a city by name
+    CityResponseDto getCityByName(String cityName);
+
     // Find cities by part of the name
     List<CityResponseDto> getCitiesByNameContainsIgnoreCase(String cityName);
 
@@ -13,4 +21,7 @@ public interface CityServiceInterface {
 
     // Remove city from favorite
     List<CityResponseDto> deleteCityFromFavorite(String cityName);
+
+    // Add city to DB
+    void saveCity(String cityName);
 }

@@ -41,41 +41,30 @@ public class Forecast {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    /**
-     * Many-to-one relationship to the {@link City} entity.
-     * - {@code @ManyToOne(optional = false)} → each forecast must be linked to one city
-     * (the relation cannot be null).
-     * - {@code @JoinColumn(name = "city_id", nullable = false)} → defines the foreign key
-     * column in the "forecasts" table that references the "cities" table.
-     * - {@code foreignKey = @ForeignKey(name = "fk_forecast_city")} → explicit name for the
-     * foreign key constraint in the database, which improves readability and makes
-     * debugging/migrations easier.
-     * In practice: every forecast row is tied to a single city, and the database ensures
-     * referential integrity between "forecasts.city_id" and "cities.id".
-     */
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "city_id", nullable = false,
-            foreignKey = @ForeignKey(name = "fk_forecast_city"))
-    private City city;
+
+    @NotNull(message = "City name is required")
+    @NotBlank(message = "City name cannot be blank")
+    @Column(name = "city_name")
+    private String cityName;
 
     @NotNull(message = "Forecast date is required")
     @Column(name = "forecast_date", nullable = false)
-    private LocalDateTime forecastDate;
+    private LocalDate forecastDate;
 
     @NotBlank(message = "Maximum temperature is required")
-    @Column(name = "temp_max", nullable = false, length = 20)
-    private String tempMax;
+    @Column(name = "max_temp", nullable = false, length = 20)
+    private String maxTemp;
 
     @NotBlank(message = "Minimum temperature is required")
-    @Column(name = "temp_min", nullable = false, length = 20)
-    private String tempMin;
+    @Column(name = "min_temp", nullable = false, length = 20)
+    private String minTemp;
 
     @NotBlank(message = "Precipitation is required")
-    @Column(name = "precipitation", nullable = false, length = 20)
-    private String precipitation;
+    @Column(name = "precip", nullable = false, length = 20)
+    private String precip;
 
-    @NotNull(message = "Update date is required")
-    @Column(name = "update_date", nullable = false)
-    private LocalDateTime updateDateTime;
+    @NotNull(message = "Create time is required")
+    @Column(name = "create_time", nullable = false)
+    private LocalDateTime createTime;
 
 }

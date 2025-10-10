@@ -1,10 +1,9 @@
 package com.weatherforecast.dto.forecast;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 /**
  * Request DTO for Forecast queries.
  * The client specifies the city and optionally the date.
@@ -12,10 +11,11 @@ import java.time.LocalDate;
  * not provided by the client.
  */
 @Data
-@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ForecastRequestDto {
 
-    @NotNull(message = "City name is required")
+//    @NotNull(message = "City name is required")
     private String name;
 
 }

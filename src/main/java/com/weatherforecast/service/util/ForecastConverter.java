@@ -16,8 +16,6 @@ public class ForecastConverter {
         return ForecastResponseDto.builder()
                 .id(forecast.getId())
                 .cityName(forecast.getCity().getName())
-                .latitude(forecast.getCity().getLatitude())
-                .longitude(forecast.getCity().getLongitude())
                 .forecastDate(forecast.getForecastDate())
                 .tempMax(forecast.getTempMax())
                 .tempMin(forecast.getTempMin())

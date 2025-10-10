@@ -20,8 +20,6 @@ public class CityConverter {
         return CityResponseDto.builder()
                 .id(city.getId())
                 .name(city.getName())
-                .latitude(city.getLatitude())
-                .longitude(city.getLongitude())
                 .build();
     }
     public List<CityResponseDto> fromCitiesToDtoList(List<City> cities) {

@@ -39,10 +39,4 @@ public class City {
     @Size(min = 3, max = 20)
     private String name;
 
-    @NotBlank(message = "Longitude is required and must be not blank")
-    private String longitude;
-
-    @NotBlank(message = "Latitude is required and must be not blank")
-    private String latitude;
-
 }

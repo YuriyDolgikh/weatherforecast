@@ -8,6 +8,7 @@ import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.service.util.ForecastConverter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class ForecastService implements ForecastServiceInterface{
         return converter.toDto(request.getName(), forecastsFromApi);
     }
 
+    @Scheduled(cron = "0 0 */4 * * *")
     @Transactional
     @Override
     public void updateForecastForAllCitiesFromDatabase() {      // TODO method

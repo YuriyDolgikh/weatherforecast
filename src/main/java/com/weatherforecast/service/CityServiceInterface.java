@@ -1,14 +1,13 @@
 package com.weatherforecast.service;
 
 import com.weatherforecast.dto.city.CityResponseDto;
-import com.weatherforecast.entity.City;
 
 import java.util.List;
 
 public interface CityServiceInterface {
 
     // Get all cities from DB
-    List<City> getAllCities();
+    List<CityResponseDto> getAllCities();
 
     // Find a city by name
     CityResponseDto getCityByName(String cityName);

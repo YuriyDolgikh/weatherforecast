@@ -45,8 +45,8 @@ public class ForecastService implements ForecastServiceInterface{
     @Scheduled(cron = "0 0 */4 * * *")
     @Transactional
     @Override
-    public void updateForecastForAllCitiesFromDatabase() {      // TODO method
-        List<City> citiesInDatabase = cityService.getAllCities();
+    public void updateForecastForAllCitiesFromDatabase() {
+        List<City> citiesInDatabase = cityService.getAllCitiesFullDetails();
         for (City city : citiesInDatabase) {
             get7DayForecast(new ForecastRequestDto(city.getName()));
         }

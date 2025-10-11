@@ -154,6 +154,10 @@ public class UserService {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
     public void setConfirmedAdmin(User user) {
         user.setStatus(User.Status.CONFIRMED);
         user.setRole(User.Role.ADMIN);

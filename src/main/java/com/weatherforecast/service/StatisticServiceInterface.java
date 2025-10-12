@@ -4,6 +4,7 @@ import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.user.UserResponseDto;
 
 import java.util.List;
+import java.util.Set;
 
 public interface StatisticServiceInterface {
     // for ADMIN only
@@ -12,10 +13,10 @@ public interface StatisticServiceInterface {
     List<UserResponseDto> getAllUsers();
 
     // get sities added to favorites by all users
-    List<CityResponseDto> getAllCitiesInFavorites();
+    Set<CityResponseDto> getAllCitiesInFavorites();
 
     // get sities added to favorite by user
-    List<CityResponseDto> getAllCitiesInFavoriteByUserId(Long userId);
+    Set<CityResponseDto> getAllCitiesInFavoriteByUserId(Long userId);
 
     // the coldest city today
     CityResponseDto getColdestCity();

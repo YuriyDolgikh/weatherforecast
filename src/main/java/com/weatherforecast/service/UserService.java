@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -57,6 +58,11 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
 
         return userConverter.toDto(user);
+    }
+
+    public User getUserByIdForAdmin(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
     }
 
     public List<User> getAllUsersFullDetails() {

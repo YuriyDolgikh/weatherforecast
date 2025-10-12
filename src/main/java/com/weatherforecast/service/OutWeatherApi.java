@@ -4,6 +4,7 @@ import com.weatherforecast.dto.forecastJSON.DailyForecast;
 import com.weatherforecast.dto.forecastJSON.WeeklyForecast;
 import com.weatherforecast.entity.Forecast;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -20,7 +21,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class OutWeatherApi {
-    private static final String API_KEY = "1b7700a0a1da4b37bd47798363d96942";
+
+    @Value("${weather.api-key}")
+    private static String API_KEY;
     private static final String REQUEST_URL = "https://api.weatherbit.io/v2.0/forecast/daily";
 
     private final RestTemplate restTemplate;

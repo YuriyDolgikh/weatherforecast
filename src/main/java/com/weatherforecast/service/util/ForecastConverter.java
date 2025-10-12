@@ -1,6 +1,7 @@
 package com.weatherforecast.service.util;
 
 import com.weatherforecast.dto.forecast.DailyForecastResponseDto;
+import com.weatherforecast.dto.forecast.TodayCityAverageWeatherResponseDto;
 import com.weatherforecast.dto.forecast.WeeklyForecastResponseDto;
 import com.weatherforecast.entity.Forecast;
 import org.springframework.stereotype.Component;
@@ -28,5 +29,12 @@ public class ForecastConverter {
                 .map(entity -> toDto(entity))
                 .collect(Collectors.toList());
         return new WeeklyForecastResponseDto(city, forecastDtos);
+    }
+
+    public TodayCityAverageWeatherResponseDto toDto(String city, Forecast forecast) {
+        Double maxTemp = Double.parseDouble(forecast.getMaxTemp());
+        Double minTemp = Double.parseDouble(forecast.getMinTemp());
+        String avgTemp = String.valueOf((maxTemp + minTemp) / 2);
+        return new TodayCityAverageWeatherResponseDto(city, avgTemp, forecast.getPrecip());
     }
 }

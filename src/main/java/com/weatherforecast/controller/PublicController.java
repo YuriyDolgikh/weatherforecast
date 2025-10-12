@@ -22,8 +22,8 @@ public class PublicController {
                 .body(userService.registration(userRequestDto));
     }
 
-    @GetMapping("/confirm")
-    public ResponseEntity<String> confirm(@RequestParam String code) {
+    @GetMapping("/confirmation")
+    public ResponseEntity<String> confirmation(@RequestParam String code) {
         return ResponseEntity.ok(userService.confirmationEmail(code));
     }
 

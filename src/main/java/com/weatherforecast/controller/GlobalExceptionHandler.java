@@ -1,23 +1,36 @@
 package com.weatherforecast.controller;
 
+import com.weatherforecast.dto.ApiError;
 import com.weatherforecast.exception.AlreadyExistException;
 import com.weatherforecast.exception.BadRequestException;
+import com.weatherforecast.exception.MailSendingException;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.security.service.InvalidJwtException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DateTimeParseException.class)
+    public ResponseEntity<String> handlerDateTimeParseException(DateTimeParseException e){
+        return new ResponseEntity<>( e.getMessage() , HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<String> handlerNullPointerException(NullPointerException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -31,6 +44,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AlreadyExistException.class)
     public ResponseEntity<String> handlerAlreadyExistException(AlreadyExistException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MailSendingException.class)
+    public ResponseEntity<String> handlerMailSendingException(MailSendingException e){
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -59,6 +77,22 @@ public class GlobalExceptionHandler {
         body.put("errors", errors);
         return ResponseEntity.badRequest().body(body);
     }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(Map.of("error","This User is not registered"));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(Map.of("error","Wrong login or password"));
+    }
+
+
 
     /**
      * Handles  thrown when the request body
@@ -130,6 +164,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleInvalidJwt(InvalidJwtException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handlerMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+        ApiError error = ApiError.builder()
+                .error("Invalid parameter")
+                .message("Failed to convert parameter value")
+                .parameter(e.getName())
+                .rejectedValue(e.getValue())
+                .timestamp(LocalDateTime.now())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
 }

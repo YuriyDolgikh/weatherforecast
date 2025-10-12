@@ -1,9 +1,12 @@
 package com.weatherforecast.service;
 
+import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.forecast.ForecastRequestDto;
+import com.weatherforecast.dto.forecast.TodayCityAverageWeatherResponseDto;
 import com.weatherforecast.dto.forecast.WeeklyForecastResponseDto;
 import com.weatherforecast.entity.City;
 import com.weatherforecast.entity.Forecast;
+import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.service.util.ForecastConverter;
 import jakarta.transaction.Transactional;
@@ -11,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -51,6 +56,19 @@ public class ForecastService implements ForecastServiceInterface{
             get7DayForecast(new ForecastRequestDto(city.getName()));
         }
 
+    }
+
+    @Transactional
+    @Override
+    public List<TodayCityAverageWeatherResponseDto> getTodayCitiesAverageWeather() {
+        List<CityResponseDto> favouriteCities = cityService.getCitiesByCurrentUser();
+        List<TodayCityAverageWeatherResponseDto> todayWeathers = new ArrayList<>();
+        for (CityResponseDto city : favouriteCities) {
+            Forecast todayCityForecast = repository.findByCityNameAndForecastDate(city.getName(), LocalDate.now())
+                    .orElseThrow(() -> new NotFoundException("Today weather for city: " + city.getName() + " not found"));
+            todayWeathers.add(converter.toDto(city.getName(), todayCityForecast));
+        }
+        return todayWeathers;
     }
 
 }

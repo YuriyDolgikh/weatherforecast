@@ -15,6 +15,8 @@ public interface ForecastRepository extends JpaRepository<Forecast, Long> {
 
     List<Forecast> findByCityNameAndCreateTimeAfterOrderByForecastDateAsc(String cityName, LocalDateTime createTime);
 
+    List<Forecast> findByForecastDate(LocalDate forecastDate);
+
     Optional<Forecast> findByCityNameAndForecastDate(String cityName, LocalDate forecastDate);
 
     void deleteByCityName(String cityName);

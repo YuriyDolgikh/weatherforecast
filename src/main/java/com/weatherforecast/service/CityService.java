@@ -6,7 +6,6 @@ import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.service.util.CityConverter;
-import com.weatherforecast.service.util.UserConverter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -81,7 +81,7 @@ public class UserService {
         User user = codeConfirmationService.changeConfirmationStatusByCode(code);
         user.setStatus(User.Status.CONFIRMED);
         userRepository.save(user);
-        return "Email " + user.getEmail() + " successfully confirmed";
+        return "Email " + user.getEmail() + " is successfully confirmed";
     }
 
     @Transactional

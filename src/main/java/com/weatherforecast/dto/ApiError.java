@@ -15,7 +15,7 @@ public class ApiError {
     // Common error description ("Validation failed", "User not found")
     private String error;
 
-    // Detailed error description ("Пользователь с ID = 2 не найден)
+    // Detailed error description ("User with ID = 2 not found")
     private String message;
 
     // Parameter name, if error related to it ("userId")

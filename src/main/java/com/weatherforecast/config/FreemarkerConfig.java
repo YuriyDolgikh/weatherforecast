@@ -11,7 +11,7 @@ public class FreemarkerConfig {
     public Configuration freemakerConfiguration() {
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_21);
         configuration.setDefaultEncoding("UTF-8");
-        configuration.setTemplateLoader(new ClassTemplateLoader(AppConfig.class, "/mails/"));
+        configuration.setTemplateLoader(new ClassTemplateLoader(AppConfig.class, "/mail/"));
         return configuration;
     }
 }

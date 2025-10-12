@@ -44,6 +44,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         } catch (InvalidJwtException e) {
             System.out.println("ERROR !!! " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("error: " + e.getMessage());
+            return;
         }
 
         // definitely we need to apply changes to the object with the list of filters

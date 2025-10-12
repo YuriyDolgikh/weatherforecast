@@ -4,6 +4,7 @@ import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.ConfirmationCodeRepository;
+import com.weatherforecast.service.mail.MailUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,11 @@ import java.util.UUID;
 public class CodeConfirmationService {
 
     private final ConfirmationCodeRepository repository;
+    private final MailUtil mailUtil;
 
     private final int EXPIRATION_PERIOD = 1; // in days
 
-    private final String LINK_PATH = "localhost:8080/api/users/code/confirmation?code=";
+    private final String LINK_PATH = "http://localhost:8080/api/public/confirmation?code=";
 
     public void confirmationCodeManager(User user) {
         String code = generateCode();
@@ -30,12 +32,8 @@ public class CodeConfirmationService {
     }
 
     private void sendCodeByEmail(String code, User user) {
-
         String linkToSend = LINK_PATH + code;
-
-        // TODO тут будет отправка пользователю письма с кодом
-
-        // Modeling type of email message
+        mailUtil.send(user, linkToSend);
         System.out.printf("Confirmation code: " + linkToSend);
     }
 
@@ -65,13 +63,9 @@ public class CodeConfirmationService {
     public User changeConfirmationStatusByCode(String code) {
         ConfirmationCode confirmationCode = repository.findByCode(code)
                 .orElseThrow(() -> new NotFoundException("Confirmation code: " + code + " not found"));
-
         User user = confirmationCode.getUser();
-
         confirmationCode.setConfirmed(true);
-
         repository.save(confirmationCode);
-
         return user;
     }
 

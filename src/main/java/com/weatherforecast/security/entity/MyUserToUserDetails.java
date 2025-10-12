@@ -29,6 +29,12 @@ public class MyUserToUserDetails implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
+    @Override
+    public boolean isEnabled() {
+        return user.getStatus().name().equals("CONFIRMED");
+    }
+
+
     // Methods, written below, are not used in this project and made for keep the structure of the project
 
     @Override
@@ -46,8 +52,4 @@ public class MyUserToUserDetails implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

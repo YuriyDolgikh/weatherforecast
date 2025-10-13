@@ -27,6 +27,11 @@ public class UserService {
     private final UserConverter userConverter;
     private final CodeConfirmationService codeConfirmationService;
 
+    /**
+     *
+     * @param request
+     * @return
+     */
     @Transactional
     public UserResponseDto registration(UserRequestDto request) {
         // Check duplicate for email

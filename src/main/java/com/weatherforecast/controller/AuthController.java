@@ -18,6 +18,12 @@ public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * Authenticates a user based on the provided credentials and generates a JWT token.
+     *
+     * @param authRequestDto the authentication request containing the user's credentials
+     * @return ResponseEntity containing an AuthResponseDto with the generated JWT token
+     */
     @PostMapping
     ResponseEntity<AuthResponseDto> authenticate(@Valid @RequestBody AuthRequestDto authRequestDto) {
         String jwt = authService.generateJwt(authRequestDto);

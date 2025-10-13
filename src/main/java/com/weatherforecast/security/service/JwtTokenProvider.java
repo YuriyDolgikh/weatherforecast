@@ -19,7 +19,7 @@ public class JwtTokenProvider {
     /**
      * Create new JWT token for user with username
      *
-     * @param username
+     * @param username - username (email)
      * @return String variable with a complete JWT token
      */
     public String createToken(String username) {

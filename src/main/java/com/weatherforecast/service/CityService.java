@@ -22,16 +22,28 @@ public class CityService implements CityServiceInterface {
     private final CityConverter cityConverter;
     private final UserService userService;
 
-
+    /**
+     * Get all cities from database
+     * @return List of CityResponseDto objects
+     */
     @Override
     public List<CityResponseDto> getAllCities() {
         return cityConverter.toDtos(cityRepository.findAll());
     }
 
+    /**
+     * Get all cities from database with full details
+     * @return List of City objects
+     */
     public List<City> getAllCitiesFullDetails() {
         return cityRepository.findAll();
     }
 
+    /**
+     * Get city by name from the database
+     * @param cityName
+     * @return CityResponseDto object
+     */
     @Override
     public CityResponseDto getCityByName(String cityName) {
         City city = cityRepository.findByName(cityName)

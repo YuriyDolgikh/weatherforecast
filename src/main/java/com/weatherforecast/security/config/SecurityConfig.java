@@ -43,7 +43,13 @@ public class SecurityConfig {
                         .requestMatchers("/v3/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN","USER")
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                )
+
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthEntryPoint())
+                        .accessDeniedHandler(new RestAccessDeniedHandler())
+                )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

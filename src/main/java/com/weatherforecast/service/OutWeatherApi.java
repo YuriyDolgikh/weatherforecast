@@ -23,7 +23,7 @@ import java.util.List;
 public class OutWeatherApi {
 
     @Value("${weather.api-key}")
-    private String API_KEY;
+    private String API_KEY = "1b7700a0a1da4b37bd47798363d96942" ;
     private static final String REQUEST_URL = "https://api.weatherbit.io/v2.0/forecast/daily";
 
     private final RestTemplate restTemplate;

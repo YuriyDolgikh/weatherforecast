@@ -24,7 +24,19 @@ public class CodeConfirmationService {
     private final int EXPIRATION_PERIOD = 180; // in days
 
     private final String LINK_PATH = "http://localhost:8080/api/public/confirmation?code=";
-
+    /**
+     * Main entry point to generate and send a confirmation code for the given user.
+     * <p>
+     * This method performs three actions:
+     * <ol>
+     *   <li>Generates a unique confirmation code</li>
+     *   <li>Saves the code in the database</li>
+     *   <li>Sends the confirmation link to the user's email</li>
+     * </ol>
+     * </p>
+     *
+     * @param user the user for whom the confirmation code will be generated and sent
+     */
     public void confirmationCodeManager(User user) {
         String code = generateCode();
         saveConfirmationCode(code, user);

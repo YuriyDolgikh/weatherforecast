@@ -21,7 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ForecastService implements ForecastServiceInterface{
+public class ForecastService implements ForecastServiceInterface {
 
     private final ForecastRepository repository;
     private final CityService cityService;
@@ -30,6 +30,18 @@ public class ForecastService implements ForecastServiceInterface{
 
     private static final Integer EXPIRATION_PERIOD_MINUTES = 240;
 
+    /**
+     * Retrieves or updates a 7-day weather forecast for the specified city.
+     * <p>
+     * If a forecast for the city already exists in the database and is still valid
+     * (not older than {@link #EXPIRATION_PERIOD_MINUTES}), the data will be returned from the database.
+     * Otherwise, fresh forecast data will be fetched from the external API,
+     * saved to the database, and returned.
+     * </p>
+     *
+     * @param request a {@link ForecastRequestDto} containing the name of the city to fetch the forecast for
+     * @return a {@link WeeklyForecastResponseDto} containing the latest 7-day forecast data
+     */
     @Transactional
     @Override
     public WeeklyForecastResponseDto get7DayForecast(ForecastRequestDto request) {
@@ -47,6 +59,14 @@ public class ForecastService implements ForecastServiceInterface{
         return converter.toDto(request.getName(), forecastsFromApi);
     }
 
+
+    /**
+     * Scheduled task that updates forecasts for all cities in the database.
+     * <p>
+     * This method runs automatically every 4 hours and refreshes all forecast data
+     * by fetching the latest information from the external weather API.
+     * </p>
+     */
     @Scheduled(cron = "0 0 */4 * * *")
     @Transactional
     @Override
@@ -57,7 +77,17 @@ public class ForecastService implements ForecastServiceInterface{
         }
 
     }
-
+    /**
+     * Retrieves today's weather forecast for all favorite cities of the currently logged-in user.
+     * <p>
+     * The method collects weather data for each city in the user's favorites list
+     * and returns a summary containing today’s average weather information.
+     * </p>
+     *
+     * @return a list of {@link TodayCityAverageWeatherResponseDto} representing today’s weather
+     *         for each of the user's favorite cities
+     * @throws NotFoundException if no forecast data is found for one of the user's cities
+     */
     @Transactional
     @Override
     public List<TodayCityAverageWeatherResponseDto> getTodayCitiesAverageWeather() {

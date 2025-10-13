@@ -114,6 +114,7 @@ public class UserService {
         }
 
         // Save the updated user
+        userByEmail.setUpdateDate(LocalDateTime.now());
         userRepository.save(userByEmail);
         return userConverter.toDto(userByEmail);
     }

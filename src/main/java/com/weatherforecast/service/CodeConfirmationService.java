@@ -21,7 +21,7 @@ public class CodeConfirmationService {
     private final ConfirmationCodeRepository repository;
     private final MailUtil mailUtil;
 
-    private final int EXPIRATION_PERIOD = 1; // in days
+    private final int EXPIRATION_PERIOD = 180; // in days
 
     private final String LINK_PATH = "http://localhost:8080/api/public/confirmation?code=";
 
@@ -31,6 +31,11 @@ public class CodeConfirmationService {
         sendCodeByEmail(code, user);
     }
 
+    /**
+     * Send confirmation code by email
+     * @param code - confirmation code
+     * @param user - user for whom we send confirmation code
+     */
     private void sendCodeByEmail(String code, User user) {
         String linkToSend = LINK_PATH + code;
         mailUtil.send(user, linkToSend);

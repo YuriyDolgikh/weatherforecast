@@ -25,6 +25,8 @@ public class MailUtil {
     private final Configuration freemakerConfiguration;
     private final String messageSubject = "Code confirmation email";
 
+    // http://localhost:8080/api/public/confirmation?code=f9fcc1ec-6d34-4fbe-9367-69378ae89d70
+
     public void send(User user, String linkToSend) {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, "UTF-8");

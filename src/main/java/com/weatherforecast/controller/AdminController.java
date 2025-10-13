@@ -31,7 +31,7 @@ public class AdminController {
     }
 
     /**
-     * Retrieves all cities from users
+     * Retrieves all favorites cities from all users
      *
      * @return a set of cities as CityResponseDto
      */

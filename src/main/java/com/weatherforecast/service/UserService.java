@@ -125,6 +125,10 @@ public class UserService {
         // Check that such id exists
         // If not - return false and do nothing
         if (!userRepository.existsById(id)) {
+            User user = userRepository.findById(id).get();
+            if (user.getRole().equals(User.Role.ADMIN)) {
+                throw new BadRequestException("You can't delete an admin");
+            }
             return false;
         }
 

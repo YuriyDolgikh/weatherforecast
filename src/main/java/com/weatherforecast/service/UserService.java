@@ -28,7 +28,8 @@ public class UserService {
     private final CodeConfirmationService codeConfirmationService;
 
     /**
-     *
+     * Registration a new user in system.
+     * Wethod check
      * @param request
      * @return
      */

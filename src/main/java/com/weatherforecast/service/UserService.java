@@ -3,7 +3,6 @@ package com.weatherforecast.service;
 import com.weatherforecast.dto.user.UserRequestDto;
 import com.weatherforecast.dto.user.UserResponseDto;
 import com.weatherforecast.dto.user.UserUpdateRequestDto;
-import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.AlreadyExistException;
 import com.weatherforecast.exception.BadRequestException;
@@ -34,6 +33,16 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto registration(UserRequestDto request) {
+
+        // Check the password is not null or blank
+        if (request.getHashPassword() == null || request.getHashPassword().isBlank()) {
+            throw new IllegalArgumentException("Password cannot be null or blank");
+        }
+
+        if (request.getHashPassword().length() < 6 || request.getHashPassword().length() > 20) {
+            throw new IllegalArgumentException("Password length must be between 6 and 20");
+        }
+
         // Check duplicate for email
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AlreadyExistException("User with email: " + request.getEmail() + " is already exist");
@@ -58,12 +67,12 @@ public class UserService {
         return userConverter.fromUsers(userRepository.findAll());
     }
 
-    public UserResponseDto getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
-
-        return userConverter.toDto(user);
-    }
+//    public UserResponseDto getUserById(Long id) {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
+//
+//        return userConverter.toDto(user);
+//    }
 
     public User getUserByIdForAdmin(Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -74,12 +83,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserResponseDto getUserByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
-
-        return userConverter.toDto(user);
-    }
+//    public UserResponseDto getUserByEmail(String email) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
+//
+//        return userConverter.toDto(user);
+//    }
 
     @Transactional
     public String confirmationEmail(String code) {
@@ -143,19 +152,19 @@ public class UserService {
         return true;
     }
 
-    @Transactional
-    public boolean renewCode(String email) {    // TODO - by the what case?
+//    @Transactional
+//    public boolean renewCode(String email) {    // TODO - by the what case?
+//
+//        User user = getUserByEmailOrThrow(email);
+//
+//        codeConfirmationService.confirmationCodeManager(user);
+//        return true;
+//    }
 
-        User user = getUserByEmailOrThrow(email);
-
-        codeConfirmationService.confirmationCodeManager(user);
-        return true;
-    }
-
-    public List<ConfirmationCode> findCodesByUser(String email) {
-        User user = getUserByEmailOrThrow(email);
-        return codeConfirmationService.findCodesByUser(user);
-    }
+//    public List<ConfirmationCode> findCodesByUser(String email) {
+//        User user = getUserByEmailOrThrow(email);
+//        return codeConfirmationService.findCodesByUser(user);
+//    }
 
     public User getUserByEmailOrThrow(String email) {
         return userRepository.findByEmail(email)

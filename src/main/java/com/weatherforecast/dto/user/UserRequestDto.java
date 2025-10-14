@@ -1,6 +1,5 @@
 package com.weatherforecast.dto.user;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,16 +14,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserRequestDto {
 
-    @NotBlank(message = "Name is required and must be not blank)")
+    @NotBlank
     @Size(min = 3, max = 15)
     private String name;
 
     @Email(regexp = "^[A-Za-z0-9]+@[A-Za-z0-9]+\\.[A-Za-z]{2,}$", message = "Invalid email")
-    @Column(unique = true, nullable = false)
+    @NotBlank
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+    @Size(min = 6, max = 20)
     private String hashPassword;
 
 }

@@ -24,7 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
-    private final CodeConfirmationService codeConfirmationService;
+    private final ConfirmationCodeService codeConfirmationService;
 
     /**
      *

@@ -16,7 +16,7 @@ import java.util.UUID;
 @Data
 @RequiredArgsConstructor
 @Service
-public class CodeConfirmationService {
+public class ConfirmationCodeService {
 
     private final ConfirmationCodeRepository repository;
     private final MailUtil mailUtil;

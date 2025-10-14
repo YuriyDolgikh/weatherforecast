@@ -4,7 +4,7 @@ import com.weatherforecast.dto.user.UserRequestDto;
 import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.NotFoundException;
-import com.weatherforecast.service.CodeConfirmationService;
+import com.weatherforecast.service.ConfirmationCodeService;
 import com.weatherforecast.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -23,7 +23,7 @@ public class AppConfig {
     public static final String ADMIN_PASSWORD = "admin123";
     public static final String ADMIN_USERNAME = "admin";
     public final UserService userService;
-    public final CodeConfirmationService codeConfirmationService;
+    public final ConfirmationCodeService codeConfirmationService;
 
     @Bean
     public CommandLineRunner lineRunner() {

@@ -8,6 +8,7 @@ import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
+import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
 import com.weatherforecast.service.util.CityConverter;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +60,9 @@ class StatisticServiceGetAllFavoritesCitiesTest {
     @Autowired
     private ForecastService forecastService;
 
+    @Autowired
+    private ForecastRepository forecastRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
@@ -78,19 +83,48 @@ class StatisticServiceGetAllFavoritesCitiesTest {
                 .build();
 
         userRepository.save(user1);
+
+        Forecast forecast1 = Forecast.builder()
+                .cityName("Berlin")
+                .createTime(LocalDateTime.now())
+                .minTemp("1")
+                .maxTemp("2")
+                .forecastDate(LocalDate.now())
+                .precip("2")
+                .build();
+
+        Forecast forecast2 = Forecast.builder()
+                .cityName("London")
+                .createTime(LocalDateTime.now())
+                .minTemp("1")
+                .maxTemp("3")
+                .forecastDate(LocalDate.now())
+                .precip("4")
+                .build();
+
+        forecastRepository.save(forecast1);
+        forecastRepository.save(forecast2);
+
+        City city1 = City.builder()
+                .name("London")
+                .build();
+
+        City city2 = City.builder()
+                .name("Berlin")
+                .build();
+
+        cityRepository.save(city1);
+        cityRepository.save(city2);
+
     }
 
 
 
-    @BeforeEach
-    void getForecast() {
-        ForecastRequestDto request = new ForecastRequestDto("Berlin");
-        forecastService.get7DayForecast(request);
-    }
+
 
 
     @Test
-    void getAllCitiesInFavorites_whenNoUsers_throws() {
+    void getAllCitiesInFavoritesIfDataBaseIsEmpty() {
         userRepository.deleteAll();
 
         assertThrows(NotFoundException.class,
@@ -106,15 +140,18 @@ class StatisticServiceGetAllFavoritesCitiesTest {
         User checkCity = userService.getCurrentUser();
 
         cityService.addCityToFavorite("Berlin");
+        cityService.addCityToFavorite("London");
 
         Set<CityResponseDto> favorites = statisticService.getAllCitiesInFavorites();
 
 
         assertNotNull(favorites);
         assertTrue(favorites.stream().anyMatch(city -> city.getName().equals("Berlin")));
+        assertTrue(favorites.stream().anyMatch(city -> city.getName().equals("London")));
 
 
         assertTrue(checkCity.getCities().stream().anyMatch(c -> "Berlin".equals(c.getName())));
+        assertTrue(checkCity.getCities().stream().anyMatch(c -> "London".equals(c.getName())));
 
 
     }

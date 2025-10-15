@@ -2,6 +2,8 @@ package com.weatherforecast.service;
 
 import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.forecast.ForecastRequestDto;
+import com.weatherforecast.entity.City;
+import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
@@ -20,6 +22,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 
@@ -76,15 +79,42 @@ class StatisticServiceGetColdestCityTest {
 
         userRepository.save(user1);
 
+        Forecast forecast1 = Forecast.builder()
+                .cityName("Berlin")
+                .createTime(LocalDateTime.now())
+                .minTemp("10")
+                .maxTemp("20")
+                .forecastDate(LocalDate.now())
+                .precip("2")
+                .build();
+
+        Forecast forecast2 = Forecast.builder()
+                .cityName("London")
+                .createTime(LocalDateTime.now())
+                .minTemp("1")
+                .maxTemp("3")
+                .forecastDate(LocalDate.now())
+                .precip("4")
+                .build();
+
+        forecastRepository.save(forecast1);
+        forecastRepository.save(forecast2);
+
+        City city1 = City.builder()
+                .name("London")
+                .build();
+
+        City city2 = City.builder()
+                .name("Berlin")
+                .build();
+
+        cityRepository.save(city1);
+        cityRepository.save(city2);
+
+
     }
 
-    @BeforeEach
-    void createCity() {
-        ForecastRequestDto request1 = new ForecastRequestDto("Berlin");
-        forecastService.get7DayForecast(request1);
-        ForecastRequestDto request2 = new ForecastRequestDto("Tomsk");
-        forecastService.get7DayForecast(request2);
-    }
+
 
 
     @Test
@@ -98,7 +128,7 @@ class StatisticServiceGetColdestCityTest {
 
 
         assertNotNull(city);
-        assertTrue(city.getName().equals("Tomsk"));
+        assertTrue(city.getName().equals("London"));
 
     }
 

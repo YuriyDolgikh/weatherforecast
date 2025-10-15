@@ -27,9 +27,13 @@ public class UserService {
     private final ConfirmationCodeService codeConfirmationService;
 
     /**
-     *
-     * @param request
-     * @return
+     * Register a new user in the system.
+     * wChecks whether the email already exists, creates a new user entity
+     * with default role and status, saves it to the repository, and sends
+     * a confirmation code via email.
+     * @param request from user registration data
+     * @return {@link UserResponseDto} containing information about the registered user
+     * @throws AlreadyExistException if a user with the given email already exists
      */
     @Transactional
     public UserResponseDto registration(UserRequestDto request) {
@@ -63,10 +67,25 @@ public class UserService {
         return userConverter.toDto(newUser);
     }
 
+
+    /**
+     * Retrieves all users from the system
+     * Converts all user entities from the repository into {@link UserResponseDto}
+     * @return a list of {@link UserResponseDto} representing all users in the system
+     */
     public List<UserResponseDto> getAllUsers() {
         return userConverter.fromUsers(userRepository.findAll());
     }
 
+
+    /**
+     * Retrieves a user by their unique identifier.
+     * Searches for the user in the repository by the given ID.
+     * If no user is found, a {@link NotFoundException} is thrown.
+     * @param id the unique identifier of the user
+     * @return  {@link UserResponseDto} representing the found user
+     * @throws NotFoundException if no user with the given ID exists
+     */
     public UserResponseDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
@@ -74,15 +93,41 @@ public class UserService {
         return userConverter.toDto(user);
     }
 
+
+    /**
+     * Retrieves a user by their unique identifier for administrative purposes.
+     Searches for the user in the repository by the given ID.
+     * If no user is found, a {@link NotFoundException} is thrown.
+     * @param id the unique identifier of the user
+     * @return the {@link User} entity representing the found user
+     * @throws NotFoundException if no user with the given ID exists
+     */
     public User getUserByIdForAdmin(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
     }
 
+
+    /**
+     * Retrieves users from the system
+     * @returnRetrieves all users from the system with full details.
+     * Returns the complete list of {@link User} entities as stored in the repository,
+     * including all fields without conversion to DTO.
+     * @return a list of {@link User} entities containing full user information
+     */
     public List<User> getAllUsersFullDetails() {
         return userRepository.findAll();
     }
 
+
+    /**
+     * Retrieves a user from the system by their email address.
+     *  * Searches for the user in the repository using the provided email.
+     * If no user is found, a {@link NotFoundException} is thrown.
+     * @param email the email address of the user
+     * @return a {@link UserResponseDto} representing the found user
+     * @throws NotFoundException if no user with the given email exists
+     */
     public UserResponseDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
@@ -90,6 +135,12 @@ public class UserService {
         return userConverter.toDto(user);
     }
 
+
+    /**
+     *
+     * @param code
+     * @return
+     */
     @Transactional
     public String confirmationEmail(String code) {
         User user = codeConfirmationService.changeConfirmationStatusByCode(code);

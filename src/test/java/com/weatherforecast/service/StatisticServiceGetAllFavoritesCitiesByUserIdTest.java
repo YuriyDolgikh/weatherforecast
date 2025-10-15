@@ -2,9 +2,12 @@ package com.weatherforecast.service;
 
 import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.forecast.ForecastRequestDto;
+import com.weatherforecast.entity.City;
+import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
+import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +22,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,6 +55,9 @@ class StatisticServiceGetAllFavoritesCitiesByUserIdTest {
     @Autowired
     private ForecastService forecastService;
 
+    @Autowired
+    private ForecastRepository forecastRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
@@ -72,14 +79,31 @@ class StatisticServiceGetAllFavoritesCitiesByUserIdTest {
 
         userRepository.save(user1);
 
+        Forecast forecast1 = Forecast.builder()
+                .cityName("Berlin")
+                .createTime(LocalDateTime.now())
+                .minTemp("1")
+                .maxTemp("2")
+                .forecastDate(LocalDate.now())
+                .precip("2")
+                .build();
+
+
+        forecastRepository.save(forecast1);
+
+
+        City city1 = City.builder()
+                .name("Berlin")
+                .build();
+
+
+        cityRepository.save(city1);
+
+
     }
 
 
-    @BeforeEach
-    void getForecast() {
-        ForecastRequestDto request = new ForecastRequestDto("Berlin");
-        forecastService.get7DayForecast(request);
-    }
+
 
     @Test
     @Transactional

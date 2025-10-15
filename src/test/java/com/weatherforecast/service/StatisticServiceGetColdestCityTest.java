@@ -65,7 +65,7 @@ class StatisticServiceGetColdestCityTest {
     }
 
     @BeforeEach
-    void createUser() {
+    void setUp() {
         User user1 = User.builder()
                 .name("User1")
                 .email("user1@company.com")

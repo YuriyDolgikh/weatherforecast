@@ -33,7 +33,6 @@ public class StatisticService implements StatisticServiceInterface {
     private final ForecastRepository forecastRepository;
 
 
-
     @Override
     public List<UserResponseDto> getAllUsers() {
         List<UserResponseDto> users = userService.getAllUsers();
@@ -51,11 +50,17 @@ public class StatisticService implements StatisticServiceInterface {
             throw new NotFoundException(" Users not found ");
         }
         Set<CityResponseDto> favoritesCities = new HashSet<>();
+
+
         for (User user : users) {
 
             for (City city : user.getCities()) {
                 favoritesCities.add(cityConverter.toDto(city));
             }
+        }
+
+        if (favoritesCities.isEmpty()) {
+            throw new NotFoundException(" Favorites cities not found ");
         }
 
 
@@ -84,7 +89,7 @@ public class StatisticService implements StatisticServiceInterface {
         List<Forecast> forecasts = forecastRepository.findByForecastDate(LocalDate.now());
         Forecast coldest = forecasts.
                 stream()
-                .filter(forecast -> forecast.getMinTemp() != null )
+                .filter(forecast -> forecast.getMinTemp() != null)
                 .min(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getMinTemp()))).orElseThrow(() -> new NotFoundException("Coldest City not found"));
 
         return cityService.getCityByName(coldest.getCityName());
@@ -95,7 +100,7 @@ public class StatisticService implements StatisticServiceInterface {
         List<Forecast> forecasts = forecastRepository.findByForecastDate(LocalDate.now());
         Forecast warmest = forecasts.
                 stream()
-                .filter(forecast -> forecast.getMaxTemp() != null )
+                .filter(forecast -> forecast.getMaxTemp() != null)
                 .max(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getMaxTemp()))).orElseThrow(() -> new NotFoundException("Warmest City not found"));
 
         return cityService.getCityByName(warmest.getCityName());
@@ -107,7 +112,7 @@ public class StatisticService implements StatisticServiceInterface {
         List<Forecast> forecasts = forecastRepository.findByForecastDate(LocalDate.now());
         Forecast maxPrecipitation = forecasts.
                 stream()
-                .filter(forecast -> forecast.getPrecip() != null )
+                .filter(forecast -> forecast.getPrecip() != null)
                 .max(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getPrecip()))).orElseThrow(() -> new NotFoundException("City with max precipitation not found"));
 
         return cityService.getCityByName(maxPrecipitation.getCityName());

@@ -67,12 +67,12 @@ public class UserService {
         return userConverter.fromUsers(userRepository.findAll());
     }
 
-//    public UserResponseDto getUserById(Long id) {
-//        User user = userRepository.findById(id)
-//                .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
-//
-//        return userConverter.toDto(user);
-//    }
+    public UserResponseDto getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User with id = " + id + " not found"));
+
+        return userConverter.toDto(user);
+    }
 
     public User getUserByIdForAdmin(Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -83,12 +83,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-//    public UserResponseDto getUserByEmail(String email) {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
-//
-//        return userConverter.toDto(user);
-//    }
+    public UserResponseDto getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User with email: " + email + " not found"));
+
+        return userConverter.toDto(user);
+    }
 
     @Transactional
     public String confirmationEmail(String code) {
@@ -183,7 +183,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void setConfirmedAdmin(User user) {
+    public void setConfirmedAndAdmin(User user) {
         user.setStatus(User.Status.CONFIRMED);
         user.setRole(User.Role.ADMIN);
         userRepository.save(user);

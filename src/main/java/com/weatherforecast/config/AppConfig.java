@@ -35,7 +35,7 @@ public class AppConfig {
                 } catch (NotFoundException e) {
                     userService.registration(new UserRequestDto(ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD));
                     User userAdmin = userService.getUserByEmailOrThrow(ADMIN_EMAIL);
-                    userService.setConfirmedAdmin(userAdmin);
+                    userService.setConfirmedAndAdmin(userAdmin);
                     List<ConfirmationCode> codes = codeConfirmationService.findCodesByUser(userAdmin);
                     for (ConfirmationCode code : codes) {
                         codeConfirmationService.changeConfirmationStatusByCode(code.getCode());

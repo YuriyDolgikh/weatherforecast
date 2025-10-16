@@ -3,6 +3,7 @@ package com.weatherforecast.service;
 import com.weatherforecast.dto.user.UserRequestDto;
 import com.weatherforecast.dto.user.UserResponseDto;
 import com.weatherforecast.dto.user.UserUpdateRequestDto;
+import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.AlreadyExistException;
 import com.weatherforecast.exception.BadRequestException;
@@ -24,7 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
-    private final ConfirmationCodeService codeConfirmationService;
+    private final CodeConfirmationService codeConfirmationService;
 
     /**
      *
@@ -33,16 +34,6 @@ public class UserService {
      */
     @Transactional
     public UserResponseDto registration(UserRequestDto request) {
-
-        // Check the password is not null or blank
-        if (request.getHashPassword() == null || request.getHashPassword().isBlank()) {
-            throw new IllegalArgumentException("Password cannot be null or blank");
-        }
-
-        if (request.getHashPassword().length() < 6 || request.getHashPassword().length() > 20) {
-            throw new IllegalArgumentException("Password length must be between 6 and 20");
-        }
-
         // Check duplicate for email
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AlreadyExistException("User with email: " + request.getEmail() + " is already exist");
@@ -152,19 +143,19 @@ public class UserService {
         return true;
     }
 
-//    @Transactional
-//    public boolean renewCode(String email) {    // TODO - by the what case?
-//
-//        User user = getUserByEmailOrThrow(email);
-//
-//        codeConfirmationService.confirmationCodeManager(user);
-//        return true;
-//    }
+    @Transactional
+    public boolean renewCode(String email) {    // TODO - by the what case?
 
-//    public List<ConfirmationCode> findCodesByUser(String email) {
-//        User user = getUserByEmailOrThrow(email);
-//        return codeConfirmationService.findCodesByUser(user);
-//    }
+        User user = getUserByEmailOrThrow(email);
+
+        codeConfirmationService.confirmationCodeManager(user);
+        return true;
+    }
+
+    public List<ConfirmationCode> findCodesByUser(String email) {
+        User user = getUserByEmailOrThrow(email);
+        return codeConfirmationService.findCodesByUser(user);
+    }
 
     public User getUserByEmailOrThrow(String email) {
         return userRepository.findByEmail(email)
@@ -183,7 +174,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void setConfirmedAndAdmin(User user) {
+    public void setConfirmedAdmin(User user) {
         user.setStatus(User.Status.CONFIRMED);
         user.setRole(User.Role.ADMIN);
         userRepository.save(user);

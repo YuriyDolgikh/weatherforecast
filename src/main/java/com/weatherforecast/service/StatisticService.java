@@ -1,22 +1,19 @@
 package com.weatherforecast.service;
 
-import com.weatherforecast.controller.CityController;
 import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.user.UserResponseDto;
 import com.weatherforecast.entity.City;
 import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
+import com.weatherforecast.exception.BadRequestException;
 import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.service.util.CityConverter;
 import com.weatherforecast.service.util.ForecastConverter;
-import com.weatherforecast.service.util.UserConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.xml.sax.DocumentHandler;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -38,7 +35,7 @@ public class StatisticService implements StatisticServiceInterface {
         List<UserResponseDto> users = userService.getAllUsers();
         List<UserResponseDto> responceEmployeeDTOList = users.stream().map(user -> new UserResponseDto(user.getId(), user.getName(), user.getEmail(), user.getRole())).toList();
         if (responceEmployeeDTOList.isEmpty()) {
-            throw new NotFoundException(" Employees not found ");
+            throw new BadRequestException(" User database is empty ");
         }
         return responceEmployeeDTOList;
     }
@@ -60,7 +57,7 @@ public class StatisticService implements StatisticServiceInterface {
         }
 
         if (favoritesCities.isEmpty()) {
-            throw new NotFoundException(" Favorites cities not found ");
+            throw new BadRequestException(" Favorites cities database  is empty ");
         }
 
 
@@ -78,7 +75,7 @@ public class StatisticService implements StatisticServiceInterface {
         Set<City> favoritesCities = user.getCities();
 
         if (favoritesCities.isEmpty()) {
-            throw new NotFoundException(" Favorites cities not found ");
+            throw new BadRequestException(" Favorites cities database  is empty ");
         }
 
         return favoritesCities.stream().map(city -> cityConverter.toDto(city)).collect(Collectors.toSet());
@@ -90,7 +87,7 @@ public class StatisticService implements StatisticServiceInterface {
         Forecast coldest = forecasts.
                 stream()
                 .filter(forecast -> forecast.getMinTemp() != null)
-                .min(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getMinTemp()))).orElseThrow(() -> new NotFoundException("Coldest City not found"));
+                .min(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getMinTemp()))).orElseThrow(() -> new BadRequestException("City database is empty"));
 
         return cityService.getCityByName(coldest.getCityName());
     }
@@ -101,7 +98,7 @@ public class StatisticService implements StatisticServiceInterface {
         Forecast warmest = forecasts.
                 stream()
                 .filter(forecast -> forecast.getMaxTemp() != null)
-                .max(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getMaxTemp()))).orElseThrow(() -> new NotFoundException("Warmest City not found"));
+                .max(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getMaxTemp()))).orElseThrow(() -> new BadRequestException("City database is empty"));
 
         return cityService.getCityByName(warmest.getCityName());
 
@@ -113,7 +110,7 @@ public class StatisticService implements StatisticServiceInterface {
         Forecast maxPrecipitation = forecasts.
                 stream()
                 .filter(forecast -> forecast.getPrecip() != null)
-                .max(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getPrecip()))).orElseThrow(() -> new NotFoundException("City with max precipitation not found"));
+                .max(Comparator.comparingDouble(forecast -> Double.parseDouble(forecast.getPrecip()))).orElseThrow(() -> new BadRequestException("City database is empty"));
 
         return cityService.getCityByName(maxPrecipitation.getCityName());
 

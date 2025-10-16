@@ -6,7 +6,8 @@ import com.weatherforecast.entity.User;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
-import lombok.With;
+import com.weatherforecast.service.CityService;
+import com.weatherforecast.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,21 +22,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class AdminControllerGetCityWithMaxPrecipitationTest {
-
+class AdminControllerFindAllFavoritesCitiesByAllUsersTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -44,6 +43,12 @@ class AdminControllerGetCityWithMaxPrecipitationTest {
 
     @Autowired
     private CityRepository cityRepository;
+
+    @Autowired
+    private CityService cityService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ForecastRepository forecastRepository;
@@ -81,19 +86,6 @@ class AdminControllerGetCityWithMaxPrecipitationTest {
         userRepository.save(user2);
 
 
-    }
-
-    @AfterEach
-    void dropDatabase() {
-        userRepository.deleteAll();
-        cityRepository.deleteAll();
-        forecastRepository.deleteAll();
-    }
-
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "ADMIN")
-    void findCityWithMaxPrecipitationIfAdminAndIfDatabaseNotEmpty() throws Exception {
         Forecast forecast1 = Forecast.builder()
                 .cityName("Berlin")
                 .createTime(LocalDateTime.now())
@@ -126,24 +118,43 @@ class AdminControllerGetCityWithMaxPrecipitationTest {
         cityRepository.save(city1);
         cityRepository.save(city2);
 
-        mockMvc.perform(get("/api/admin/maxPrecipitation"))
+
+    }
+
+    @AfterEach
+    void dropDatabase() {
+        userRepository.deleteAll();
+        cityRepository.deleteAll();
+        forecastRepository.deleteAll();
+    }
+
+    @Test
+    @WithMockUser(username = "user1@company.com", roles = "ADMIN")
+    void findAllFavoritesCitiesByAllUsersIfAdminAndDataBaseNotEmpty() throws Exception {
+        userService.getCurrentUser();
+
+        cityService.addCityToFavorite("Berlin");
+        cityService.addCityToFavorite("London");
+
+        mockMvc.perform(get("/api/admin/allFavoritesCities"))
                 .andExpect(status().isOk());
 
     }
 
     @Test
     @WithMockUser(username = "user2@company.com", roles = "USER")
-    void findCityWithMaxPrecipitationIfUser() throws Exception {
-        mockMvc.perform(get("/api/admin/maxPrecipitation"))
+    void findAllFavoritesCitiesByAllUsersIfUser() throws Exception {
+        mockMvc.perform(get("/api/admin/allFavoritesCities"))
                 .andExpect(status().isForbidden());
 
     }
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
-    void findCityWithMaxPrecipitationIfAdminAndIfDataBaseIsEmpty() throws Exception {
-        mockMvc.perform(get("/api/admin/maxPrecipitation"))
+    void findAllFavoritesCitiesByAllUsersIfAdminAndDataBaseIsEmpty() throws Exception {
+        mockMvc.perform(get("/api/admin/allFavoritesCities"))
                 .andExpect(status().isBadRequest());
 
     }
+
 }

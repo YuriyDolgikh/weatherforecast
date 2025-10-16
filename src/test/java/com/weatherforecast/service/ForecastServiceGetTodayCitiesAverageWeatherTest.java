@@ -3,13 +3,17 @@ package com.weatherforecast.service;
 import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.forecast.TodayCityAverageWeatherResponseDto;
 import com.weatherforecast.entity.Forecast;
+import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.service.util.ForecastConverter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,8 +28,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class ForecastServiceGetTodayCitiesAverageWeatherTest {
 
+    @MockBean
+    private CommandLineRunner lineRunner;
+
     @Mock
-    private ForecastRepository repository;
+    private ForecastRepository forecastRepository;
+
+    @Mock
+    private CityRepository cityRepository;
 
     @Mock
     private CityService cityService;
@@ -35,6 +45,12 @@ public class ForecastServiceGetTodayCitiesAverageWeatherTest {
 
     @InjectMocks
     private ForecastService forecastService;
+
+    @AfterEach
+    void dropDatabase() {
+        cityRepository.deleteAll();
+        forecastRepository.deleteAll();
+    }
 
     @Test
     void getTodayCitiesAverageWeatherWhenCitiesExist() {
@@ -53,11 +69,11 @@ public class ForecastServiceGetTodayCitiesAverageWeatherTest {
         TodayCityAverageWeatherResponseDto parisDto = new TodayCityAverageWeatherResponseDto("Paris", "22.3", "0.5");
 
         when(cityService.getCitiesByCurrentUser()).thenReturn(favouriteCities);
-        when(repository.findByCityNameAndForecastDate("Berlin", LocalDate.now()))
+        when(forecastRepository.findByCityNameAndForecastDate("Berlin", LocalDate.now()))
                 .thenReturn(Optional.of(berlinForecast));
-        when(repository.findByCityNameAndForecastDate("London", LocalDate.now()))
+        when(forecastRepository.findByCityNameAndForecastDate("London", LocalDate.now()))
                 .thenReturn(Optional.of(londonForecast));
-        when(repository.findByCityNameAndForecastDate("Paris", LocalDate.now()))
+        when(forecastRepository.findByCityNameAndForecastDate("Paris", LocalDate.now()))
                 .thenReturn(Optional.of(parisForecast));
         when(converter.toDto("Berlin", berlinForecast)).thenReturn(BerlinDto);
         when(converter.toDto("London", londonForecast)).thenReturn(londonDto);
@@ -80,7 +96,7 @@ public class ForecastServiceGetTodayCitiesAverageWeatherTest {
         assertEquals("0.5", result.get(2).getPrecip());
 
         verify(cityService, times(1)).getCitiesByCurrentUser();
-        verify(repository, times(3)).findByCityNameAndForecastDate(anyString(), eq(LocalDate.now()));
+        verify(forecastRepository, times(3)).findByCityNameAndForecastDate(anyString(), eq(LocalDate.now()));
         verify(converter, times(3)).toDto(anyString(), any(Forecast.class));
     }
 
@@ -96,7 +112,7 @@ public class ForecastServiceGetTodayCitiesAverageWeatherTest {
         assertTrue(result.isEmpty());
 
         verify(cityService, times(1)).getCitiesByCurrentUser();
-        verify(repository, never()).findByCityNameAndForecastDate(anyString(), any(LocalDate.class));
+        verify(forecastRepository, never()).findByCityNameAndForecastDate(anyString(), any(LocalDate.class));
         verify(converter, never()).toDto(anyString(), any(Forecast.class));
     }
 

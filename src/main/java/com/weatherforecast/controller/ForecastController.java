@@ -5,6 +5,7 @@ import com.weatherforecast.dto.forecast.TodayCityAverageWeatherResponseDto;
 import com.weatherforecast.dto.forecast.WeeklyForecastResponseDto;
 import com.weatherforecast.service.ForecastService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class ForecastController {
      * @return a WeeklyForecastResponseDto containing the 7-day weather forecast
      */
     @PostMapping("/forecast")
-    public WeeklyForecastResponseDto getWeatherForecast(@RequestBody ForecastRequestDto request) {
+    public WeeklyForecastResponseDto getWeatherForecast(@Valid @RequestBody ForecastRequestDto request) {
         return forecastService.get7DayForecast(request);
     }
 

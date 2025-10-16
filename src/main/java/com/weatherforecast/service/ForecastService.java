@@ -92,6 +92,9 @@ public class ForecastService implements ForecastServiceInterface {
     @Override
     public List<TodayCityAverageWeatherResponseDto> getTodayCitiesAverageWeather() {
         List<CityResponseDto> favouriteCities = cityService.getCitiesByCurrentUser();
+        if (favouriteCities.isEmpty()) {
+            throw new NotFoundException("No cities found");
+        }
         List<TodayCityAverageWeatherResponseDto> todayWeathers = new ArrayList<>();
         for (CityResponseDto city : favouriteCities) {
             Forecast todayCityForecast = repository.findByCityNameAndForecastDate(city.getName(), LocalDate.now())

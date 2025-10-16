@@ -1,5 +1,8 @@
 package com.weatherforecast.dto.forecast;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +20,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ForecastRequestDto {
 
-//    @NotNull(message = "City name is required")
+    @NotBlank(message = "City name is required")
+    @Pattern(regexp = "^[A-Za-z._!-]+$", message = "Use only Latin letters")
     private String name;
 
 }

@@ -6,6 +6,7 @@ import com.weatherforecast.dto.forecast.ForecastRequestDto;
 import com.weatherforecast.dto.forecast.WeeklyForecastResponseDto;
 import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
+import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
@@ -25,18 +26,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -74,21 +74,11 @@ class ForecastControllerGetWeatherForecastTest {
 
     @BeforeEach
     void setUp() {
+
         User user1 = User.builder()
                 .name("User1")
                 .email("user1@company.com")
                 .hashPassword("password1")
-                .role(User.Role.ADMIN)
-                .status(User.Status.CONFIRMED)
-                .createDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
-                .cities(new HashSet<>())
-                .build();
-
-        User user2 = User.builder()
-                .name("User2")
-                .email("user2@company.com")
-                .hashPassword("password2")
                 .role(User.Role.USER)
                 .status(User.Status.CONFIRMED)
                 .createDate(LocalDateTime.now())
@@ -96,23 +86,21 @@ class ForecastControllerGetWeatherForecastTest {
                 .cities(new HashSet<>())
                 .build();
 
-
         userRepository.save(user1);
-        userRepository.save(user2);
 
 
     }
 
     @Test
-    @WithMockUser(username = "user2@company.com", roles = "USER")
-    void getWeatherForecast() throws Exception {
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void getWeatherForecastIfUserLoggedIn() throws Exception {
         ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
                 .name("Berlin")
                 .build();
 
         List<Forecast> forecastsFromApi = createForecastList(7);
-        List<DailyForecastResponseDto> forecastsFromApiDtos = createForecastListDtos(forecastsFromApi);
-        WeeklyForecastResponseDto expectedResponse = new WeeklyForecastResponseDto(requestBerlin.getName(), forecastsFromApiDtos);
+        List<DailyForecastResponseDto> forecastsFromApiDto = createForecastListDtos(forecastsFromApi);
+        WeeklyForecastResponseDto expectedResponse = new WeeklyForecastResponseDto(requestBerlin.getName(), forecastsFromApiDto);
 
         when(forecastService.get7DayForecast(any(ForecastRequestDto.class))).thenReturn(expectedResponse);
 
@@ -123,6 +111,95 @@ class ForecastControllerGetWeatherForecastTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.cityName").value("Berlin"))
                 .andExpect(jsonPath("$.forecasts.length()").value(7));
+    }
+
+    @Test
+    void getWeatherForecastIfUserNotLoggedIn() throws Exception {
+        ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
+                .name("Berlin")
+                .build();
+
+        mockMvc.perform(post("/api/user/forecast")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBerlin)))
+                .andExpect(status().isForbidden());
+
+    }
+
+    @Test
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void getWeatherForecastIfRequestNull() throws Exception {
+        ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
+                .name(null)
+                .build();
+
+        mockMvc.perform(post("/api/user/forecast")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBerlin)))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void getWeatherForecastIfRequestNotValid() throws Exception {
+        ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
+                .name("123")
+                .build();
+
+        mockMvc.perform(post("/api/user/forecast")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBerlin)))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void getWeatherForecastIfRequestIsEmpty() throws Exception {
+        ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
+                .name(" ")
+                .build();
+
+        mockMvc.perform(post("/api/user/forecast")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBerlin)))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void getWeatherForecastIfInternalServerError() throws Exception {
+        ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
+                .name("Berlin")
+                .build();
+
+        when(forecastService.get7DayForecast(any(ForecastRequestDto.class))).thenThrow(new RuntimeException());
+
+        mockMvc.perform(post("/api/user/forecast")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBerlin)))
+                .andExpect(status().isInternalServerError());
+
+
+    }
+
+    @Test
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void getWeatherForecastIfCityNotFound() throws Exception {
+        ForecastRequestDto requestBerlin = ForecastRequestDto.builder()
+                .name("Google")
+                .build();
+
+        when(forecastService.get7DayForecast(any(ForecastRequestDto.class))).thenThrow(new NotFoundException("City not found"));
+
+        mockMvc.perform(post("/api/user/forecast")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestBerlin)))
+                .andExpect(status().isNotFound());
+
+
     }
 
     private List<Forecast> createForecastList(int count) {
@@ -144,15 +221,15 @@ class ForecastControllerGetWeatherForecastTest {
     }
 
     private List<DailyForecastResponseDto> createForecastListDtos(List<Forecast> forecastsFromDb) {
-        List<DailyForecastResponseDto> forecastsDtos = new ArrayList<>();
+        List<DailyForecastResponseDto> forecastsDto = new ArrayList<>();
         for (Forecast forecast : forecastsFromDb) {
             DailyForecastResponseDto forecastDto = new DailyForecastResponseDto();
             forecastDto.setDate(forecast.getForecastDate());
             forecastDto.setMaxTemp(forecast.getMaxTemp());
             forecastDto.setMinTemp(forecast.getMinTemp());
             forecastDto.setPrecip(forecast.getPrecip());
-            forecastsDtos.add(forecastDto);
+            forecastsDto.add(forecastDto);
         }
-        return forecastsDtos;
+        return forecastsDto;
     }
 }

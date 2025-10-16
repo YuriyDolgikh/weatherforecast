@@ -25,7 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserConverter userConverter;
-    private final CodeConfirmationService codeConfirmationService;
+    private final ConfirmationCodeService confirmationCodeService;
 
     /**
      *
@@ -50,7 +50,7 @@ public class UserService {
 
         userRepository.save(newUser);
         // After creating a new user, we need to create a new confirmation code for him and send it to him by email
-        codeConfirmationService.confirmationCodeManager(newUser);
+        confirmationCodeService.confirmationCodeManager(newUser);
         return userConverter.toDto(newUser);
     }
 
@@ -83,7 +83,7 @@ public class UserService {
 
     @Transactional
     public String confirmationEmail(String code) {
-        User user = codeConfirmationService.changeConfirmationStatusByCode(code);
+        User user = confirmationCodeService.changeConfirmationStatusByCode(code);
         user.setStatus(User.Status.CONFIRMED);
         userRepository.save(user);
         return "Email " + user.getEmail() + " is successfully confirmed";
@@ -148,13 +148,13 @@ public class UserService {
 
         User user = getUserByEmailOrThrow(email);
 
-        codeConfirmationService.confirmationCodeManager(user);
+        confirmationCodeService.confirmationCodeManager(user);
         return true;
     }
 
     public List<ConfirmationCode> findCodesByUser(String email) {
         User user = getUserByEmailOrThrow(email);
-        return codeConfirmationService.findCodesByUser(user);
+        return confirmationCodeService.findCodesByUser(user);
     }
 
     public User getUserByEmailOrThrow(String email) {
@@ -174,7 +174,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void setConfirmedAdmin(User user) {
+    public void setConfirmedAndAdmin(User user) {
         user.setStatus(User.Status.CONFIRMED);
         user.setRole(User.Role.ADMIN);
         userRepository.save(user);

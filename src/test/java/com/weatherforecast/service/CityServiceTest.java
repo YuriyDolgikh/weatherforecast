@@ -57,8 +57,8 @@ class CityServiceTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
+//        cityRepository.deleteAll();
+//        userRepository.deleteAll();
 
         City berlin = new City();
         berlin.setName("Berlin");

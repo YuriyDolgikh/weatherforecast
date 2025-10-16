@@ -4,13 +4,17 @@ import com.weatherforecast.dto.forecast.DailyForecastResponseDto;
 import com.weatherforecast.dto.forecast.ForecastRequestDto;
 import com.weatherforecast.dto.forecast.WeeklyForecastResponseDto;
 import com.weatherforecast.entity.Forecast;
+import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.service.util.ForecastConverter;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
@@ -31,8 +35,14 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(locations = "classpath:application-test.yml")
 class ForecastServiceGet7DayForecastTest {
 
+    @MockBean
+    private CommandLineRunner lineRunner;
+
     @Mock
-    private ForecastRepository repository;
+    private ForecastRepository forecastRepository;
+
+    @Mock
+    private CityRepository cityRepository;
 
     @Mock
     private OutWeatherApi outWeatherApi;
@@ -46,6 +56,12 @@ class ForecastServiceGet7DayForecastTest {
     @InjectMocks
     private ForecastService forecastService;
 
+    @AfterEach
+    void dropDatabase() {
+        cityRepository.deleteAll();
+        forecastRepository.deleteAll();
+    }
+
     @Test
     void get7DayForecastWhenDataExistsInDbAndIsFreshReturnFromDb() {
         String cityName = "Berlin";
@@ -55,7 +71,7 @@ class ForecastServiceGet7DayForecastTest {
         List<DailyForecastResponseDto> forecastsFromDbDtos = createForecastListDtos(forecastsFromDb);
         WeeklyForecastResponseDto expectedResponse = new WeeklyForecastResponseDto(cityName, forecastsFromDbDtos);
 
-        when(repository.findByCityNameAndCreateTimeAfterOrderByForecastDateAsc(
+        when(forecastRepository.findByCityNameAndCreateTimeAfterOrderByForecastDateAsc(
                 eq(cityName), any(LocalDateTime.class))).thenReturn(forecastsFromDb);
         when(converter.toDto(cityName, forecastsFromDb)).thenReturn(expectedResponse);
 
@@ -76,7 +92,7 @@ class ForecastServiceGet7DayForecastTest {
         List<DailyForecastResponseDto> forecastsFromApiDtos = createForecastListDtos(forecastsFromApi);
         WeeklyForecastResponseDto expectedResponse = new WeeklyForecastResponseDto(cityName, forecastsFromApiDtos);
 
-        when(repository.findByCityNameAndCreateTimeAfterOrderByForecastDateAsc(
+        when(forecastRepository.findByCityNameAndCreateTimeAfterOrderByForecastDateAsc(
                 eq(cityName), any(LocalDateTime.class))).thenReturn(forecastsFromDb);
         when(outWeatherApi.receive7DayForecast(cityName)).thenReturn(forecastsFromApi);
         when(converter.toDto(cityName, forecastsFromApi)).thenReturn(expectedResponse);
@@ -85,8 +101,8 @@ class ForecastServiceGet7DayForecastTest {
 
         assertNotNull(result);
         assertEquals(expectedResponse, result);
-        verify(repository, times(1)).deleteByCityName(cityName);
-        verify(repository, times(1)).saveAll(forecastsFromApi);
+        verify(forecastRepository, times(1)).deleteByCityName(cityName);
+        verify(forecastRepository, times(1)).saveAll(forecastsFromApi);
         assertEquals(7, forecastsFromApi.size());
     }
 

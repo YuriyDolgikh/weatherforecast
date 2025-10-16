@@ -6,7 +6,6 @@ import com.weatherforecast.entity.User;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
-import lombok.With;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,21 +20,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class AdminControllerGetCityWithMaxPrecipitationTest {
-
+class AdminControllerGetWarmestCityTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -90,10 +87,9 @@ class AdminControllerGetCityWithMaxPrecipitationTest {
         forecastRepository.deleteAll();
     }
 
-
     @Test
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
-    void findCityWithMaxPrecipitationIfAdminAndIfDatabaseNotEmpty() throws Exception {
+    void findWarmestCityIfAdminAndIfDatabaseNotEmpty() throws Exception {
         Forecast forecast1 = Forecast.builder()
                 .cityName("Berlin")
                 .createTime(LocalDateTime.now())
@@ -125,24 +121,23 @@ class AdminControllerGetCityWithMaxPrecipitationTest {
 
         cityRepository.save(city1);
         cityRepository.save(city2);
-
-        mockMvc.perform(get("/api/admin/maxPrecipitation"))
+        mockMvc.perform(get("/api/admin/warmest"))
                 .andExpect(status().isOk());
 
     }
 
     @Test
     @WithMockUser(username = "user2@company.com", roles = "USER")
-    void findCityWithMaxPrecipitationIfUser() throws Exception {
-        mockMvc.perform(get("/api/admin/maxPrecipitation"))
+    void findWarmestCityIfUser() throws Exception {
+        mockMvc.perform(get("/api/admin/warmest"))
                 .andExpect(status().isForbidden());
 
     }
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
-    void findCityWithMaxPrecipitationIfAdminAndIfDataBaseIsEmpty() throws Exception {
-        mockMvc.perform(get("/api/admin/maxPrecipitation"))
+    void findWarmestCityIfAdminAndIfDataBaseIsEmpty() throws Exception {
+        mockMvc.perform(get("/api/admin/warmest"))
                 .andExpect(status().isBadRequest());
 
     }

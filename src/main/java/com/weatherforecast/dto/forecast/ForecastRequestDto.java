@@ -1,6 +1,7 @@
 package com.weatherforecast.dto.forecast;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ForecastRequestDto {
 
 //    @NotNull(message = "City name is required")

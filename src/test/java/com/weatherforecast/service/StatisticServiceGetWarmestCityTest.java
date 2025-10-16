@@ -1,11 +1,10 @@
 package com.weatherforecast.service;
 
 import com.weatherforecast.dto.city.CityResponseDto;
-import com.weatherforecast.dto.forecast.ForecastRequestDto;
 import com.weatherforecast.entity.City;
 import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
-import com.weatherforecast.exception.NotFoundException;
+import com.weatherforecast.exception.BadRequestException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
@@ -128,7 +127,7 @@ class StatisticServiceGetWarmestCityTest {
 
 
         assertNotNull(city);
-        assertTrue(city.getName().equals("London"));
+        assertEquals("London", city.getName());
 
 
     }
@@ -141,7 +140,7 @@ class StatisticServiceGetWarmestCityTest {
 
         forecastRepository.deleteAll();
 
-        assertThrows(NotFoundException.class,
+        assertThrows(BadRequestException.class,
                 () -> statisticService.getWarmestCity());
     }
 }

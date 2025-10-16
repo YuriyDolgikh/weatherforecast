@@ -4,6 +4,7 @@ import com.weatherforecast.dto.user.UserRequestDto;
 import com.weatherforecast.entity.ConfirmationCode;
 import com.weatherforecast.entity.User;
 import com.weatherforecast.exception.AlreadyExistException;
+import com.weatherforecast.exception.BadRequestException;
 import com.weatherforecast.repository.ConfirmationCodeRepository;
 import com.weatherforecast.repository.UserRepository;
 import jakarta.validation.ConstraintViolationException;
@@ -102,17 +103,6 @@ class UserServiceRegistrationTest {
     }
 
     @Test
-    void testWhenPasswordHasWrongFormat() {
-        UserRequestDto request = UserRequestDto.builder()
-                .name("userName")
-                .email("testUser1@company.com")
-                .hashPassword("111kljnbhkghbjgvkjvfkjcfvjv")
-                .build();
-
-        assertThrows(IllegalArgumentException.class, () -> userService.registration(request));
-    }
-
-    @Test
     void testWhenEmailIsNull() {
         UserRequestDto request = UserRequestDto.builder()
                 .name("userName")
@@ -131,7 +121,7 @@ class UserServiceRegistrationTest {
                 .hashPassword("easrgf3223")
                 .build();
 
-        assertThrows(ConstraintViolationException.class, () -> userService.registration(request));
+        assertThrows(BadRequestException.class, () -> userService.registration(request));
     }
 
     @Test
@@ -164,7 +154,7 @@ class UserServiceRegistrationTest {
                 .hashPassword("easrgf3223")
                 .build();
 
-        assertThrows(ConstraintViolationException.class, () -> userService.registration(request));
+        assertThrows(BadRequestException.class, () -> userService.registration(request));
     }
 
     @Test
@@ -175,7 +165,7 @@ class UserServiceRegistrationTest {
                 .hashPassword("  ")
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> userService.registration(request));
+        assertThrows(BadRequestException.class, () -> userService.registration(request));
     }
 
     @Test

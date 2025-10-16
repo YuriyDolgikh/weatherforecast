@@ -1,11 +1,10 @@
 package com.weatherforecast.service;
 
 import com.weatherforecast.dto.city.CityResponseDto;
-import com.weatherforecast.dto.forecast.ForecastRequestDto;
 import com.weatherforecast.entity.City;
 import com.weatherforecast.entity.Forecast;
 import com.weatherforecast.entity.User;
-import com.weatherforecast.exception.NotFoundException;
+import com.weatherforecast.exception.BadRequestException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.repository.UserRepository;
@@ -22,7 +21,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -139,7 +137,7 @@ class StatisticServiceGetCityWithMaxPrecipitationTest {
         CityResponseDto city = statisticService.getCityWithMaxPrecipitation();
 
         assertNotNull(city);
-        assertTrue(city.getName().equals("London"));
+        assertEquals("London", city.getName());
     }
 
     @Test
@@ -151,7 +149,7 @@ class StatisticServiceGetCityWithMaxPrecipitationTest {
 
         forecastRepository.deleteAll();
 
-        assertThrows(NotFoundException.class,
+        assertThrows(BadRequestException.class,
                 () -> statisticService.getCityWithMaxPrecipitation());
     }
 

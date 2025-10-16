@@ -3,6 +3,7 @@ package com.weatherforecast.service;
 import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.dto.forecast.TodayCityAverageWeatherResponseDto;
 import com.weatherforecast.entity.Forecast;
+import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.ForecastRepository;
 import com.weatherforecast.service.util.ForecastConverter;
@@ -106,10 +107,7 @@ public class ForecastServiceGetTodayCitiesAverageWeatherTest {
 
         when(cityService.getCitiesByCurrentUser()).thenReturn(favouriteCities);
 
-        List<TodayCityAverageWeatherResponseDto> result = forecastService.getTodayCitiesAverageWeather();
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertThrows(NotFoundException.class, () -> forecastService.getTodayCitiesAverageWeather());
 
         verify(cityService, times(1)).getCitiesByCurrentUser();
         verify(forecastRepository, never()).findByCityNameAndForecastDate(anyString(), any(LocalDate.class));

@@ -39,6 +39,14 @@ public class UserService {
             throw new AlreadyExistException("User with email: " + request.getEmail() + " is already exist");
         }
 
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new BadRequestException("Name must be provided");
+        }
+
+        if (request.getHashPassword() == null || request.getHashPassword().isBlank()) {
+            throw new BadRequestException("Password must be provided");
+        }
+
         // When email is unique - create a new user
         LocalDateTime now = LocalDateTime.now();
 

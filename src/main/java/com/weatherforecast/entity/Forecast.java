@@ -3,6 +3,7 @@ package com.weatherforecast.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +45,7 @@ public class Forecast {
 
     @NotNull(message = "City name is required")
     @NotBlank(message = "City name cannot be blank")
+    @Pattern(regexp = "^[A-Za-z._!-]+$", message = "Use only Latin letters")
     @Column(name = "city_name")
     private String cityName;
 

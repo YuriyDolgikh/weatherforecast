@@ -3,6 +3,7 @@ package com.weatherforecast.controller;
 import com.weatherforecast.dto.user.UserRequestDto;
 import com.weatherforecast.dto.user.UserResponseDto;
 import com.weatherforecast.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class PublicController {
      * *         with HTTP status 201 (Created)
      */
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> register(@RequestBody UserRequestDto userRequestDto) {
+    public ResponseEntity<UserResponseDto> register(@Valid @RequestBody UserRequestDto userRequestDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userService.registration(userRequestDto));
@@ -37,7 +38,7 @@ public class PublicController {
      * @return a ResponseEntity containing a success message if the confirmation is successful
      */
     @GetMapping("/confirmation")
-    public ResponseEntity<String> confirmation(@RequestParam String code) {
+    public ResponseEntity<String> confirmation(@Valid @RequestParam String code) {
         return ResponseEntity.ok(userService.confirmationEmail(code));
     }
 

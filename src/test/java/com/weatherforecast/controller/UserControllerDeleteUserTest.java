@@ -87,12 +87,12 @@ public class UserControllerDeleteUserTest {
 
     @Test
     @WithMockUser(username = "testUser@company.com", roles = {"USER"})
-    void testdeleteUserWhenUserIsLoggedIn() throws Exception{
+    void testDeleteUserWhenUserIsLoggedIn() throws Exception {
 
         String requestPath = "/api/user";
 
         mockMvc.perform(delete(requestPath)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("testUser@company.com"))
                 .andExpect(jsonPath("$.name").value("testUser"))
@@ -100,7 +100,7 @@ public class UserControllerDeleteUserTest {
     }
 
     @Test
-    void testDeleteUserWhenUserIsNotLoggedIn() throws Exception{
+    void testDeleteUserWhenUserIsNotLoggedIn() throws Exception {
 
         String requestPath = "/api/user";
 

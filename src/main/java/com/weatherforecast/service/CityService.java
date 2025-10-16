@@ -60,6 +60,9 @@ public class CityService implements CityServiceInterface {
 
     @Override
     public List<CityResponseDto> getCitiesByNameContainsIgnoreCase(String cityName) {
+        if (cityName == null || cityName.isEmpty()) {
+            throw new IllegalArgumentException("City name must be provided");
+        }
         List<City> cities = cityRepository.findByNameContainingIgnoreCase(cityName);
         return cityConverter.toDtos(cities);
     }

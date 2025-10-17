@@ -3,7 +3,6 @@ package com.weatherforecast.service;
 import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.entity.City;
 import com.weatherforecast.entity.User;
-import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -14,8 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
@@ -33,12 +31,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class CityServiceGetCitiesByNameContainsIgnoreCaseTest {
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
 
     @MockBean
     private CommandLineRunner lineRunner;
@@ -56,9 +48,6 @@ class CityServiceGetCitiesByNameContainsIgnoreCaseTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
-
         City berlin = new City();
         berlin.setName("Berlin");
 
@@ -86,7 +75,6 @@ class CityServiceGetCitiesByNameContainsIgnoreCaseTest {
         cityRepository.deleteAll();
     }
 
-
     @Test
     void testGetCitiesByNameContainsIgnoreCaseIfExist() {
         List<CityResponseDto> result = cityService.getCitiesByNameContainsIgnoreCase("eR");
@@ -98,27 +86,15 @@ class CityServiceGetCitiesByNameContainsIgnoreCaseTest {
     void testGetCitiesByNameContainsIgnoreCaseIfNotExist() {
         List<CityResponseDto> result = cityService.getCitiesByNameContainsIgnoreCase("eRa");
         assertEquals(0, result.size());
-        assertThrows(NotFoundException.class, () -> cityService.getCityByName(""));
     }
 
     @Test
     void testGetCitiesByNameContainsIgnoreCaseIfNull() {
-
         assertThrows(IllegalArgumentException.class, () -> cityService.getCitiesByNameContainsIgnoreCase(null));
-        assertThrows(NotFoundException.class, () ->
-                cityService.getCityByName(null)
-        );
     }
 
     @Test
     void testGetCitiesByNameContainsIgnoreCaseIfEmpty() {
-
         assertThrows(IllegalArgumentException.class, () -> cityService.getCitiesByNameContainsIgnoreCase(""));
-        assertThrows(NotFoundException.class, () ->
-                cityService.getCityByName("")
-        );
     }
-
-
-
 }

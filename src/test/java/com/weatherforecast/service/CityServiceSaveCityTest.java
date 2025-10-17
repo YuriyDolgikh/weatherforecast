@@ -12,8 +12,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class CityServiceSaveCityTest {
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
     @MockBean
     private CommandLineRunner lineRunner;
 
@@ -54,9 +45,6 @@ class CityServiceSaveCityTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
-
         City berlin = new City();
         berlin.setName("Berlin");
 
@@ -84,16 +72,8 @@ class CityServiceSaveCityTest {
         cityRepository.deleteAll();
     }
 
-
-
-
-
-
-
-
-
     @Test
-    void testSaveCityNewCity() {
+    void testSaveCityNewCityIfOk() {
         cityService.saveCity("Rome");
         assertTrue(cityRepository.findByName("Rome").isPresent());
     }
@@ -120,6 +100,4 @@ class CityServiceSaveCityTest {
         });
         assertEquals("City name must be provided", exception.getMessage());
     }
-
-
 }

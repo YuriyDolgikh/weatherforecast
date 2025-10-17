@@ -13,8 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -34,12 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class CityServiceGetCitiesByCurrentUserTest {
 
     @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
-    @MockBean
     private CommandLineRunner lineRunner;
 
     @Autowired
@@ -55,9 +47,6 @@ class CityServiceGetCitiesByCurrentUserTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
-
         testUser = User.builder()
                 .name("user1")
                 .email("user1@company.com")
@@ -78,7 +67,7 @@ class CityServiceGetCitiesByCurrentUserTest {
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testGetCitiesByCurrentUser() {
+    void testGetCitiesByCurrentUserIfOk() {
 
         City berlin = new City();
         berlin.setName("Berlin");
@@ -97,9 +86,8 @@ class CityServiceGetCitiesByCurrentUserTest {
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testGetCitiesByCurrentUserWhenSetCitiesIsNull() {
+    void testGetCitiesByCurrentUserWhenSetCitiesIsEmpty() {
         List<CityResponseDto> result = cityService.getCitiesByCurrentUser();
         assertEquals(0, result.size());
     }
-
 }

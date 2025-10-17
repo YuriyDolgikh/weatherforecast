@@ -14,8 +14,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -25,7 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
@@ -34,12 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class CityServiceAddCityToFavoriteTest {
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
 
     @MockBean
     private CommandLineRunner lineRunner;
@@ -57,9 +50,6 @@ class CityServiceAddCityToFavoriteTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
-
         City berlin = new City();
         berlin.setName("Berlin");
 
@@ -79,6 +69,7 @@ class CityServiceAddCityToFavoriteTest {
                 .build();
 
         userRepository.save(testUser);
+
     }
 
     @AfterEach
@@ -90,14 +81,14 @@ class CityServiceAddCityToFavoriteTest {
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testAddCityToFavorite() {
+    void testAddCityToFavoriteIfOk() {
         List<CityResponseDto> result = cityService.addCityToFavorite("Paris");
         assertEquals(2, result.size());
     }
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testAddCityToFavorite_NotFound() {
+    void testAddCityToFavoriteCityNotFound() {
         assertThrows(NotFoundException.class, () -> cityService.addCityToFavorite("Rome"));
     }
 

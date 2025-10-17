@@ -14,9 +14,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class CityServiceGetCityByNameTest {
 
     @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
-    @MockBean
     private CommandLineRunner lineRunner;
 
     @Autowired
@@ -57,9 +48,6 @@ class CityServiceGetCityByNameTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
-
         City berlin = new City();
         berlin.setName("Berlin");
 
@@ -87,13 +75,6 @@ class CityServiceGetCityByNameTest {
         cityRepository.deleteAll();
     }
 
-
-    @Test
-    void testGetCityByName() {
-        CityResponseDto city = cityService.getCityByName("Berlin");
-        assertEquals("Berlin", city.getName());
-    }
-
     @Test
     void testGetCityByNameExists() {
         CityResponseDto city = cityService.getCityByName("Berlin");
@@ -107,24 +88,21 @@ class CityServiceGetCityByNameTest {
                 NotFoundException.class,
                 () -> cityService.getCityByName("Bern")
         );
-
         assertEquals("City with name = Bern not found in database", exception.getMessage());
     }
 
     @Test
-    void testGetCityByName_NotFound() {
+    void testGetCityByNameIfNotFound() {
         assertThrows(NotFoundException.class, () -> cityService.getCityByName("London"));
     }
 
     @Test
-    void testGetCityByNameNull() {
+    void testGetCityByNameIsNull() {
         assertThrows(NotFoundException.class, () -> cityService.getCityByName(null));
     }
 
     @Test
-    void testGetCityByNameISEmpty() {
+    void testGetCityByNameIsEmpty() {
         assertThrows(NotFoundException.class, () -> cityService.getCityByName(""));
     }
-
-
 }

@@ -132,7 +132,7 @@ class UserServiceRegistrationTest {
                 .hashPassword(null)
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> userService.registration(request));
+        assertThrows(BadRequestException.class, () -> userService.registration(request));
     }
 
     @Test

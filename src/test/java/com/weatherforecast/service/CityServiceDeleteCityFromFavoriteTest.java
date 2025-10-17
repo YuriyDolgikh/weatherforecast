@@ -25,7 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class CityServiceTest {
+class CityServiceDeleteCityFromFavoriteTest {
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -88,51 +89,6 @@ class CityServiceTest {
     }
 
     @Test
-    void testGetAllCities() {
-        List<CityResponseDto> cities = cityService.getAllCities();
-        assertEquals(2, cities.size());
-    }
-
-    @Test
-    void testGetCityByName() {
-        CityResponseDto city = cityService.getCityByName("Berlin");
-        assertEquals("Berlin", city.getName());
-    }
-
-    @Test
-    void testGetCityByName_NotFound() {
-        assertThrows(NotFoundException.class, () -> cityService.getCityByName("London"));
-    }
-
-    @Test
-    void testGetCitiesByNameContainsIgnoreCase() {
-        List<CityResponseDto> result = cityService.getCitiesByNameContainsIgnoreCase(null);
-        assertEquals(1, result.size());
-        assertEquals("Berlin", result.get(0).getName());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testGetCitiesByCurrentUser() {
-        List<CityResponseDto> result = cityService.getCitiesByCurrentUser();
-        assertEquals(1, result.size());
-        assertEquals("Berlin", result.get(0).getName());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testAddCityToFavorite() {
-        List<CityResponseDto> result = cityService.addCityToFavorite("Paris");
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testAddCityToFavorite_NotFound() {
-        assertThrows(NotFoundException.class, () -> cityService.addCityToFavorite("Rome"));
-    }
-
-    @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
     void testDeleteCityFromFavorite() {
         List<CityResponseDto> result = cityService.deleteCityFromFavorite("Berlin");
@@ -145,26 +101,15 @@ class CityServiceTest {
         assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
     }
 
-    /*
-        @Test
+    @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite_NotFoundInFavorites() {
-        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
+    void testDeleteCityFromFavoriteIfNull() {
+        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite(null));
     }
-    null, empty
-     */
-
     @Test
-    void testSaveCity_NewCity() {
-        cityService.saveCity("Rome");
-        assertTrue(cityRepository.findByName("Rome").isPresent());
-    }
-
-    @Test
-    void testSaveCity_AlreadyExists() {
-        cityService.saveCity("Berlin");
-        long count = cityRepository.count();
-        assertEquals(2, count); // nothing new added
+    @WithMockUser(username = "user1@company.com", roles = "USER")
+    void testDeleteCityFromFavoriteIfEmpty() {
+        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite(""));
     }
 
 }

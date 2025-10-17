@@ -125,6 +125,10 @@ public class CityService implements CityServiceInterface {
      */
     @Override
     public void saveCity(String cityName) {
+        if (cityName == null || cityName.isBlank()) {
+            throw new IllegalArgumentException("City name must be provided");
+        }
+
         Optional<City> city = cityRepository.findByName(cityName);
         if (city.isEmpty()) {
             cityRepository.save(new City(null, cityName));

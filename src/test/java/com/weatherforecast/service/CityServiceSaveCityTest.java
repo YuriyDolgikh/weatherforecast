@@ -1,9 +1,7 @@
 package com.weatherforecast.service;
 
-import com.weatherforecast.dto.city.CityResponseDto;
 import com.weatherforecast.entity.City;
 import com.weatherforecast.entity.User;
-import com.weatherforecast.exception.NotFoundException;
 import com.weatherforecast.repository.CityRepository;
 import com.weatherforecast.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class CityServiceTest {
+class CityServiceSaveCityTest {
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -87,84 +84,42 @@ class CityServiceTest {
         cityRepository.deleteAll();
     }
 
-    @Test
-    void testGetAllCities() {
-        List<CityResponseDto> cities = cityService.getAllCities();
-        assertEquals(2, cities.size());
-    }
+
+
+
+
+
+
+
 
     @Test
-    void testGetCityByName() {
-        CityResponseDto city = cityService.getCityByName("Berlin");
-        assertEquals("Berlin", city.getName());
-    }
-
-    @Test
-    void testGetCityByName_NotFound() {
-        assertThrows(NotFoundException.class, () -> cityService.getCityByName("London"));
-    }
-
-    @Test
-    void testGetCitiesByNameContainsIgnoreCase() {
-        List<CityResponseDto> result = cityService.getCitiesByNameContainsIgnoreCase(null);
-        assertEquals(1, result.size());
-        assertEquals("Berlin", result.get(0).getName());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testGetCitiesByCurrentUser() {
-        List<CityResponseDto> result = cityService.getCitiesByCurrentUser();
-        assertEquals(1, result.size());
-        assertEquals("Berlin", result.get(0).getName());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testAddCityToFavorite() {
-        List<CityResponseDto> result = cityService.addCityToFavorite("Paris");
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testAddCityToFavorite_NotFound() {
-        assertThrows(NotFoundException.class, () -> cityService.addCityToFavorite("Rome"));
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite() {
-        List<CityResponseDto> result = cityService.deleteCityFromFavorite("Berlin");
-        assertEquals(0, result.size());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite_NotFoundInFavorites() {
-        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
-    }
-
-    /*
-        @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite_NotFoundInFavorites() {
-        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
-    }
-    null, empty
-     */
-
-    @Test
-    void testSaveCity_NewCity() {
+    void testSaveCityNewCity() {
         cityService.saveCity("Rome");
         assertTrue(cityRepository.findByName("Rome").isPresent());
     }
 
     @Test
-    void testSaveCity_AlreadyExists() {
+    void testSaveCityAlreadyExists() {
         cityService.saveCity("Berlin");
         long count = cityRepository.count();
         assertEquals(2, count); // nothing new added
     }
+
+    @Test
+    void testSaveCityIfNull() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            cityService.saveCity(null);
+        });
+        assertEquals("City name must be provided", exception.getMessage());
+    }
+
+    @Test
+    void testSaveCityIfEmpty() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            cityService.saveCity("");
+        });
+        assertEquals("City name must be provided", exception.getMessage());
+    }
+
 
 }

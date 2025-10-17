@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
-class CityServiceTest {
+class CityServiceAddCityToFavoriteTest {
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -87,37 +87,6 @@ class CityServiceTest {
         cityRepository.deleteAll();
     }
 
-    @Test
-    void testGetAllCities() {
-        List<CityResponseDto> cities = cityService.getAllCities();
-        assertEquals(2, cities.size());
-    }
-
-    @Test
-    void testGetCityByName() {
-        CityResponseDto city = cityService.getCityByName("Berlin");
-        assertEquals("Berlin", city.getName());
-    }
-
-    @Test
-    void testGetCityByName_NotFound() {
-        assertThrows(NotFoundException.class, () -> cityService.getCityByName("London"));
-    }
-
-    @Test
-    void testGetCitiesByNameContainsIgnoreCase() {
-        List<CityResponseDto> result = cityService.getCitiesByNameContainsIgnoreCase(null);
-        assertEquals(1, result.size());
-        assertEquals("Berlin", result.get(0).getName());
-    }
-
-    @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testGetCitiesByCurrentUser() {
-        List<CityResponseDto> result = cityService.getCitiesByCurrentUser();
-        assertEquals(1, result.size());
-        assertEquals("Berlin", result.get(0).getName());
-    }
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
@@ -134,37 +103,14 @@ class CityServiceTest {
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite() {
-        List<CityResponseDto> result = cityService.deleteCityFromFavorite("Berlin");
-        assertEquals(0, result.size());
+    void testAddCityToFavoriteIfCityNull() {
+        assertThrows(NotFoundException.class, () -> cityService.addCityToFavorite(null));
     }
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite_NotFoundInFavorites() {
-        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
-    }
-
-    /*
-        @Test
-    @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite_NotFoundInFavorites() {
-        assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
-    }
-    null, empty
-     */
-
-    @Test
-    void testSaveCity_NewCity() {
-        cityService.saveCity("Rome");
-        assertTrue(cityRepository.findByName("Rome").isPresent());
-    }
-
-    @Test
-    void testSaveCity_AlreadyExists() {
-        cityService.saveCity("Berlin");
-        long count = cityRepository.count();
-        assertEquals(2, count); // nothing new added
+    void testAddCityToFavoriteIfCityEmpty() {
+        assertThrows(NotFoundException.class, () -> cityService.addCityToFavorite(""));
     }
 
 }

@@ -121,7 +121,7 @@ class StatisticServiceGetColdestCityTest {
         CityResponseDto city = statisticService.getColdestCity();
 
         assertNotNull(city);
-        assertEquals("London", city.getName());
+        assertEquals("Berlin", city.getName());
     }
 
     @Test

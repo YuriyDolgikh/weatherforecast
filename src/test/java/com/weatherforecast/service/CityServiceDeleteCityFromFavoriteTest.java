@@ -14,8 +14,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -37,12 +35,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CityServiceDeleteCityFromFavoriteTest {
 
     @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
-
-    @MockBean
     private CommandLineRunner lineRunner;
 
     @Autowired
@@ -58,9 +50,6 @@ class CityServiceDeleteCityFromFavoriteTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
-
         City berlin = new City();
         berlin.setName("Berlin");
 
@@ -90,14 +79,14 @@ class CityServiceDeleteCityFromFavoriteTest {
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite() {
+    void testDeleteCityFromFavoriteIfOk() {
         List<CityResponseDto> result = cityService.deleteCityFromFavorite("Berlin");
         assertEquals(0, result.size());
     }
 
     @Test
     @WithMockUser(username = "user1@company.com", roles = "USER")
-    void testDeleteCityFromFavorite_NotFoundInFavorites() {
+    void testDeleteCityFromFavoriteIfNotFoundInFavorites() {
         assertThrows(NotFoundException.class, () -> cityService.deleteCityFromFavorite("Paris"));
     }
 

@@ -13,8 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
@@ -31,12 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestPropertySource(locations = "classpath:application-test.yml")
 class CityServiceGetAllCitiesTest {
-
-    @MockBean
-    private PasswordEncoder passwordEncoder;
-
-    @MockBean
-    private AuthenticationManager authenticationManager;
 
     @MockBean
     private CommandLineRunner lineRunner;
@@ -54,8 +46,7 @@ class CityServiceGetAllCitiesTest {
 
     @BeforeEach
     void setUp() {
-        cityRepository.deleteAll();
-        userRepository.deleteAll();
+
         testUser = User.builder()
                 .name("user1")
                 .email("user1@company.com")
@@ -75,7 +66,7 @@ class CityServiceGetAllCitiesTest {
     }
 
     @Test
-    void testGetAllCities() {
+    void testGetAllCitiesIfExist() {
         cityRepository.saveAll(List.of(
                 new City(null, "Berlin"),
                 new City(null, "Paris")
@@ -85,13 +76,8 @@ class CityServiceGetAllCitiesTest {
     }
 
     @Test
-    void testGetAllCitiesIfEmptyOrNull() {
+    void testGetAllCitiesIfEmpty() {
         List<CityResponseDto> cities = cityService.getAllCities();
         assertEquals(0, cities.size());
     }
-
-
-
-
-
 }

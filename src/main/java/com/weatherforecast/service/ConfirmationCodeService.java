@@ -48,13 +48,13 @@ public class ConfirmationCodeService {
      * @param code - confirmation code
      * @param user - user for whom we send confirmation code
      */
-    private void sendCodeByEmail(String code, User user) {
+    void sendCodeByEmail(String code, User user) {
         String linkToSend = LINK_PATH + code;
         mailUtil.send(user, linkToSend);
         System.out.printf("Confirmation code: " + linkToSend);
     }
 
-    private void saveConfirmationCode(String generatedCode, User user) {
+    void saveConfirmationCode(String generatedCode, User user) {
         ConfirmationCode newCode = ConfirmationCode.builder()
                 .code(generatedCode)
                 .user(user)
@@ -73,7 +73,7 @@ public class ConfirmationCodeService {
      * @template -  xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx ('x' - is a character or a number)
      * @example - 3f29c3b2-9fc2-11ed-a8fc-0242ac120002
      */
-    private String generateCode() {
+    String generateCode() {
         return UUID.randomUUID().toString();
     }
 
@@ -87,6 +87,9 @@ public class ConfirmationCodeService {
     }
 
     public List<ConfirmationCode> findCodesByUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User must be provided");
+        }
         return repository.findByUser(user);
     }
 

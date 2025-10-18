@@ -32,7 +32,7 @@ class ConfirmationCodeServiceFindCodesByUserTest {
     }
 
     @Test
-    void findCodesByUserIfPresent() {
+    void testFindCodesByUserIfPresent() {
         User user = User.builder().id(1L).email("test@example.com").build();
         List<ConfirmationCode> expectedCodes = Arrays.asList(
                 ConfirmationCode.builder().id(1L).user(user).build(),
@@ -48,7 +48,7 @@ class ConfirmationCodeServiceFindCodesByUserTest {
     }
 
     @Test
-    void findCodesByUserWhenNoCodesFound() {
+    void testFindCodesByUserWhenNoCodesFound() {
         User user = User.builder().id(1L).email("test@example.com").build();
         when(confirmationCodeRepository.findByUser(user)).thenReturn(Collections.emptyList());
 
@@ -58,7 +58,7 @@ class ConfirmationCodeServiceFindCodesByUserTest {
     }
 
     @Test
-    void findCodesByUserWhenUserIsNull() {
+    void testFindCodesByUserWhenUserIsNull() {
         User user = null;
         assertThrows(IllegalArgumentException.class, () -> confirmationCodeService.findCodesByUser(user));
     }

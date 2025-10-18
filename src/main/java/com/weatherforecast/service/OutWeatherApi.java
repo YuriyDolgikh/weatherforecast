@@ -57,7 +57,7 @@ public class OutWeatherApi {
         }
     }
 
-    private List<Forecast> convertToEntities(String cityName, List<DailyForecast> dailyForecasts) {
+    List<Forecast> convertToEntities(String cityName, List<DailyForecast> dailyForecasts) {
         List<Forecast> entities = new ArrayList<>();
 
         for (DailyForecast forecast : dailyForecasts) {
@@ -72,11 +72,10 @@ public class OutWeatherApi {
             );
             entities.add(entity);
         }
-
         return entities;
     }
 
-    private String createUrl(String cityName) {
+    String createUrl(String cityName) {
         return UriComponentsBuilder.fromUriString(REQUEST_URL)
                 .queryParam("city", cityName)
                 .queryParam("key", API_KEY)

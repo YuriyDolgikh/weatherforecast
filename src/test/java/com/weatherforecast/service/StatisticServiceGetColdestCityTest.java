@@ -100,11 +100,11 @@ class StatisticServiceGetColdestCityTest {
         forecastRepository.save(forecast2);
 
         City city1 = City.builder()
-                .name("London")
+                .name("Berlin")
                 .build();
 
         City city2 = City.builder()
-                .name("Berlin")
+                .name("London")
                 .build();
 
         cityRepository.save(city1);

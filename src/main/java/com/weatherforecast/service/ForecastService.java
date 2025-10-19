@@ -59,7 +59,6 @@ public class ForecastService implements ForecastServiceInterface {
         return converter.toDto(request.getName(), forecastsFromApi);
     }
 
-
     /**
      * Scheduled task that updates forecasts for all cities in the database.
      * <p>
@@ -75,8 +74,8 @@ public class ForecastService implements ForecastServiceInterface {
         for (City city : citiesInDatabase) {
             get7DayForecast(new ForecastRequestDto(city.getName()));
         }
-
     }
+
     /**
      * Retrieves today's weather forecast for all favorite cities of the currently logged-in user.
      * <p>

@@ -60,6 +60,5 @@ public class CityController {
     public ResponseEntity<List<CityResponseDto>> deleteCityFromFavorite(@RequestParam String cityName) {
         return ResponseEntity.ok(cityService.deleteCityFromFavorite(cityName));
     }
-
 }
 

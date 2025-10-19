@@ -8,7 +8,11 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class TodayCityAverageWeatherResponseDto {
+
     private String cityName;
+
     private String avgTemp;
+
     private String precip;
+
 }

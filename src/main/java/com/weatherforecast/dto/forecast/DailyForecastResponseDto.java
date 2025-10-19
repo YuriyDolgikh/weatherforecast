@@ -12,8 +12,13 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class DailyForecastResponseDto {
+
     private LocalDate date;
+
     private String maxTemp;
+
     private String minTemp;
+
     private String precip;
+
 }

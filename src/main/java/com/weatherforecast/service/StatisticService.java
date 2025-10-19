@@ -26,9 +26,7 @@ public class StatisticService implements StatisticServiceInterface {
     private final UserService userService;
     private final CityService cityService;
     private final CityConverter cityConverter;
-    private final ForecastConverter forecastConverter;
     private final ForecastRepository forecastRepository;
-
 
     @Override
     public List<UserResponseDto> getAllUsers() {
@@ -48,9 +46,7 @@ public class StatisticService implements StatisticServiceInterface {
         }
         Set<CityResponseDto> favoritesCities = new HashSet<>();
 
-
         for (User user : users) {
-
             for (City city : user.getCities()) {
                 favoritesCities.add(cityConverter.toDto(city));
             }
@@ -59,8 +55,6 @@ public class StatisticService implements StatisticServiceInterface {
         if (favoritesCities.isEmpty()) {
             throw new BadRequestException(" Favorites cities database  is empty ");
         }
-
-
         return favoritesCities;
     }
 

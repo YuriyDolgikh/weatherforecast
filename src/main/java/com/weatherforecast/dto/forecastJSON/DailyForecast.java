@@ -11,12 +11,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DailyForecast {
+
     @JsonProperty(value = "datetime", required = true)
     private String dateTime;
+
     @JsonProperty(value = "max_temp", required = true)
     private Double maxTemp;
+
     @JsonProperty(value = "min_temp", required = true)
     private Double minTemp;
+
     @JsonProperty(value = "precip", required = true)
     private Double precipitation;
+
 }

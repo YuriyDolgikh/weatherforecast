@@ -11,6 +11,9 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class CityResponseDto {
+
     private Long id;
+
     private String name;
+
 }

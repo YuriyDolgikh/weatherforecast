@@ -27,8 +27,8 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DateTimeParseException.class)
-    public ResponseEntity<String> handlerDateTimeParseException(DateTimeParseException e){
-        return new ResponseEntity<>( e.getMessage() , HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> handlerDateTimeParseException(DateTimeParseException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NullPointerException.class)
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MailSendingException.class)
-    public ResponseEntity<String> handlerMailSendingException(MailSendingException e){
+    public ResponseEntity<String> handlerMailSendingException(MailSendingException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -79,20 +79,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException e){
+    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(Map.of("error","This User is not registered"));
+                .body(Map.of("error", "This User is not registered"));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e){
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(Map.of("error","Wrong login or password"));
+                .body(Map.of("error", "Wrong login or password"));
     }
-
-
 
     /**
      * Handles  thrown when the request body
@@ -153,7 +151,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(java.util.Map.of("message", message));
     }
 
-
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -167,7 +164,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ApiError> handlerMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e){
+    public ResponseEntity<ApiError> handlerMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         ApiError error = ApiError.builder()
                 .error("Invalid parameter")
                 .message("Failed to convert parameter value")

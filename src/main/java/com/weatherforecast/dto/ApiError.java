@@ -12,6 +12,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 public class ApiError {
+
     // Common error description ("Validation failed", "User not found")
     private String error;
 

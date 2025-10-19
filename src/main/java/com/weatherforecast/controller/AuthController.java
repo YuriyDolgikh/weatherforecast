@@ -29,5 +29,4 @@ public class AuthController {
         String jwt = authService.generateJwt(authRequestDto);
         return ResponseEntity.ok(new AuthResponseDto(jwt));
     }
-
 }

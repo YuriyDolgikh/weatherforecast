@@ -40,7 +40,6 @@ public class AdminController {
         return ResponseEntity.ok(statisticService.getAllCitiesInFavorites());
     }
 
-
     /**
      * Retrieves all favorite cities for a specific user
      *

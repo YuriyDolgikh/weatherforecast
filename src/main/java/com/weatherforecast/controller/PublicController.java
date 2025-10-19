@@ -30,7 +30,6 @@ public class PublicController {
                 .body(userService.registration(userRequestDto));
     }
 
-
     /**
      * Confirms a user's email based on the provided confirmation code.
      *
@@ -41,5 +40,4 @@ public class PublicController {
     public ResponseEntity<String> confirmation(@Valid @RequestParam String code) {
         return ResponseEntity.ok(userService.confirmationEmail(code));
     }
-
 }

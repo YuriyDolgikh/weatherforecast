@@ -19,9 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ForecastRequestDto {
-
     @NotBlank(message = "City name is required")
     @Pattern(regexp = "^[A-Za-z._!-]+$", message = "Use only Latin letters")
     private String name;
-
 }

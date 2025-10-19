@@ -10,6 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WeeklyForecastResponseDto {
+
     private String cityName;
+
     private List<DailyForecastResponseDto> forecasts;
+
 }

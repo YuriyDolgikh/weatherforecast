@@ -41,7 +41,7 @@ public class MailUtil {
         mailSender.send(message);
     }
 
-    private String createConfirmationEmail(User user, String linkToSend) throws IOException, TemplateException {
+    public String createConfirmationEmail(User user, String linkToSend) throws IOException, TemplateException {
         Template template = freemakerConfiguration.getTemplate("confirm_registration_mail.ftlh");
         Map<Object, Object> model = new HashMap<>();
         model.put("name", user.getName());

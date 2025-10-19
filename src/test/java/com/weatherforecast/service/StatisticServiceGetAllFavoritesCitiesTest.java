@@ -133,7 +133,7 @@ class StatisticServiceGetAllFavoritesCitiesTest {
     void getAllCitiesInFavorites() {
 
 
-        User checkCity = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
         cityService.addCityToFavorite("Berlin");
         cityService.addCityToFavorite("London");
@@ -146,8 +146,8 @@ class StatisticServiceGetAllFavoritesCitiesTest {
         assertTrue(favorites.stream().anyMatch(city -> city.getName().equals("London")));
 
 
-        assertTrue(checkCity.getCities().stream().anyMatch(c -> "Berlin".equals(c.getName())));
-        assertTrue(checkCity.getCities().stream().anyMatch(c -> "London".equals(c.getName())));
+        assertTrue(currentUser.getCities().stream().anyMatch(c -> "Berlin".equals(c.getName())));
+        assertTrue(currentUser.getCities().stream().anyMatch(c -> "London".equals(c.getName())));
 
 
     }

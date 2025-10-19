@@ -3,7 +3,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/weatherforecasttest
     username: root
-    password: 789456
+    password: 1111
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect

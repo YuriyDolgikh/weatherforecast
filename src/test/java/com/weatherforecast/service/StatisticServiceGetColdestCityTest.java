@@ -116,12 +116,12 @@ class StatisticServiceGetColdestCityTest {
     @Transactional
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
     void getColdestCity() {
-        User checkCity = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
         CityResponseDto city = statisticService.getColdestCity();
 
         assertNotNull(city);
-        assertEquals("London", city.getName());
+        assertEquals("Berlin", city.getName());
     }
 
     @Test

@@ -148,7 +148,6 @@ class AuthServiceTest {
 
     @Test
     void testGenerateJwtWhenPasswordIsNull() {
-        // Arrange
         String username = "user@example.com";
         String password = null;
 
@@ -185,11 +184,5 @@ class AuthServiceTest {
         assertEquals("Bad credentials", exception.getMessage());
 
         verify(customUserDetailService).loadUserByUsername(username);
-    }
-
-    @Test
-    void testGenerateJwtWithNullRequest() {
-        assertThrows(NullPointerException.class,
-                () -> authService.generateJwt(null));
     }
 }

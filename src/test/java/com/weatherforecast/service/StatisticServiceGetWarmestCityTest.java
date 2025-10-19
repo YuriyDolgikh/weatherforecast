@@ -120,7 +120,7 @@ class StatisticServiceGetWarmestCityTest {
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
     void getWarmestCity() {
 
-        User checkCity = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
 
         CityResponseDto city = statisticService.getWarmestCity();

@@ -132,7 +132,7 @@ class StatisticServiceGetCityWithMaxPrecipitationTest {
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
     void getCityWithMaxPrecipitation() {
 
-        User user = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
         CityResponseDto city = statisticService.getCityWithMaxPrecipitation();
 

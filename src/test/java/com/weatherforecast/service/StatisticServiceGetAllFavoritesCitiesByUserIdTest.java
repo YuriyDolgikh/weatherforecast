@@ -121,17 +121,17 @@ class StatisticServiceGetAllFavoritesCitiesByUserIdTest {
     @WithMockUser(username = "user1@company.com", roles = "ADMIN")
     void getAllCitiesInFavoriteByUserId() {
 
-        User checkCity = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
         cityService.addCityToFavorite("Berlin");
 
-        Set<CityResponseDto> favoritesCities = statisticService.getAllCitiesInFavoriteByUserId(checkCity.getId());
+        Set<CityResponseDto> favoritesCities = statisticService.getAllCitiesInFavoriteByUserId(currentUser.getId());
 
         assertNotNull(favoritesCities);
         assertTrue(favoritesCities.stream().anyMatch(city -> city.getName().equals("Berlin")));
 
 
-        assertTrue(checkCity.getCities().stream().anyMatch(c -> "Berlin".equals(c.getName())));
+        assertTrue(currentUser.getCities().stream().anyMatch(c -> "Berlin".equals(c.getName())));
 
 
     }
